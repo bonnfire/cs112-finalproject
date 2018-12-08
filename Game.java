@@ -106,22 +106,22 @@ public void run(){
               }
               if (code == KeyEvent.VK_SPACE) {
                   select = true;
-                  gameBoard.userInputLetters[gameBoard.userIndexX][gameBoard.userIndexY] = gameBoard.currentX;
+                  gameBoard.userWords[gameBoard.userIndexX][gameBoard.userIndexY] = gameBoard.currentX;
                   gameBoard.userIndexY += 1;
-                  gameBoard.userInputLetters[gameBoard.userIndexX][gameBoard.userIndexY] = gameBoard.currentY;
+                  gameBoard.userWords[gameBoard.userIndexX][gameBoard.userIndexY] = gameBoard.currentY;
                   gameBoard.userIndexX += 1;
 
                   while(gameBoard.userInputLetters[1][0] != null){
                   for(int i = 0; i < 20; i++){
-                      if(gameBoard.userInputLetters[i][0] == gameBoard.userInputLetters[i+1][0] &&
-                      gameBoard.userInputLetters[i][1] != gameBoard.userInputLetters[i+1][1]){
-                        if(gameBoard.userInputLetters[i+1][1] == gameBoard.userInputLetters[i][1] + 50){
+                      if(gameBoard.userWords[i][0] == gameBoard.userWords[i+1][0] &&
+                      gameBoard.userWords[i][1] != gameBoard.userWords[i+1][1]){
+                        if(gameBoard.userWords[i+1][1] == gameBoard.userWords[i][1] + 50){
                         validDirection = true;
                       }
                       }
-                      else if(gameBoard.userInputLetters[i][0] != gameBoard.userInputLetters[i+1][0] &&
-                        gameBoard.userInputLetters[i][1] == gameBoard.userInputLetters[i+1][1]){
-                          if(gameBoard.userInputLetters[i+1][0] == gameBoard.userInputLetters[i][0] + 50){
+                      else if(gameBoard.userWords[i][0] != gameBoard.userWords[i+1][0] &&
+                        gameBoard.userWords[i][1] == gameBoard.userWords[i+1][1]){
+                          if(gameBoard.userWords[i+1][0] == gameBoard.userWords[i][0] + 50){
                             validDirection = true;
                           }
                         }
@@ -131,17 +131,17 @@ public void run(){
                 else {
                   validDirection = false;
                 }
-                  System.out.println(validDirection);
-                }
                 if(code == '\n'){
                 select = false;
                 for(int i = 0; i < gameBoard.userIndexX; i++ ){
-                gameBoard.userInputLetters[i][0] = 0;
-                gameBoard.userInputLetters[i][1] = 0;
+                gameBoard.userWords[i][0] = 0;
+                gameBoard.userWords[i][1] = 0;
               }
               gameBoard.userIndexX = 0;
               gameBoard.userIndexY = 0;
             }
+            System.out.println(validDirection);
+
           }
 
       public void keyTyped(KeyEvent e) {
@@ -171,20 +171,10 @@ public void paintComponent(Graphics g) {
     }
   }
   gameBoard.drawPointer(g);
-
-if(select == true){
-  for(int i = 0; i < gameBoard.userIndexX; i++ ){
-    // for (int j = 0; j <  gameBoard.userIndexY ; j++){
-      g.setColor(Color.GREEN);
-      g.fillRect(gameBoard.userInputLetters[i][0], gameBoard.userInputLetters[i][1], 50, 50);
-
-    //}
-    }
-    gameBoard.userIndexY = 0;
-  //  gameBoard.selectLetter(g);
-}
+  gameBoard.selectLetter(g);
   g.setColor(Color.WHITE);
   g.setFont(new Font("TimesRoman", Font.BOLD, 35));
+  gameboard.drawLetters(g);
   for(int i = 0; i < 20; i++){
     for(int j = 0; j < 20; j++){
       // for(int k = 0; k < currentWords.length - 1; k++){
@@ -209,7 +199,7 @@ public class Board {
   int trackY = 0;
   int userIndexX = 0;
   int userIndexY = 0 ;
-  int[][] userInputLetters = new int[20][2];
+  int[][] userWords = new int[20][2];
   int inputLettersIndex = -1;
   String userInputString = null;
   // public static boolean select = false;
@@ -218,6 +208,7 @@ public class Board {
     for (int i = 0; i < N; i++) {
       for (int j = 0; j < N; j++) {
         board[i][j] = new Letter(' ', i, j, 0, "RED");
+        // XX
       }
     }
   }
@@ -302,6 +293,13 @@ public class Board {
       g.fillRect(currentX, currentY, 50, 50);
     }
 
+    public void drawLetters(Graphics g){
+        for (int i = 0; i < N; i++){
+          for(int j = 0; j < N; j ++){
+            board[i].draw(g);
+          }
+        }
+    }
 
 
   public void remove(int startX, int startY, int endX, int endY) {
@@ -320,6 +318,17 @@ public class Board {
   }
 
   public void selectLetter(Graphics g){
+    if(select == true){
+    for(int i = 0; i < gameBoard.userIndexX; i++ ){
+      // for (int j = 0; j <  gameBoard.userIndexY ; j++){
+        g.setColor(Color.GREEN);
+        g.fillRect(gameBoard.userWords[i][0], gameBoard.userWords[i][1], 50, 50);
+
+      //}
+      }
+      gameBoard.userIndexY = 0;
+    //  gameBoard.selectLetter(g);
+  }
     // g.setColor(Color.GREEN);
     //
     // g.fillRect(currentX, currentY, 50, 50);
@@ -368,15 +377,28 @@ class Letter{
 
   public Letter(){
     Random r = new Random();
-    char = (char)(r.nextInt(26)+65);
+    Char = (char)(r.nextInt(26)+65);
     position = new Pair(0.0, 0.0);
-    velocity = = new Pair(0.0, 0.0);
+    velocity = new Pair(0.0, 0.0);
     color = new Color(255.0, 255.0, 255.0);
   }
 }
 
-public void update(Board gameBoard){
-  position.x = position.x + 50;
+public void update(Board gameBoard, Letters[][] userWord){
+for(int i = 19; i >= 0 ; i--){
+  for (int j = 19; j >= 0; j--){
+    if (gameboard)
+
+
+  }
+  }
+  //position.x = position.x + 50;
+}
+
+public void draw(Graphics g){
+g.setColor(color);
+String s=Character.toString(Char);
+g.drawString(s, position.x, position.y);
 }
 
 ////////////////////////////////
