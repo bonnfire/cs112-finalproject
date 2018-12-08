@@ -106,41 +106,58 @@ public void run(){
               }
               if (code == KeyEvent.VK_SPACE) {
                   select = true;
-                  gameBoard.userWords[gameBoard.userIndexX][gameBoard.userIndexY] = gameBoard.currentX;
-                  gameBoard.userIndexY += 1;
-                  gameBoard.userWords[gameBoard.userIndexX][gameBoard.userIndexY] = gameBoard.currentY;
+
+                  // select the box that has the tracker blue box
+                  gameBoard.userWords[gameBoard.userIndexX][0] = gameBoard.currentX;
+                  gameBoard.userWords[gameBoard.userIndexX][1] = gameBoard.currentY;
+                  // gameBoard.userIndexX += 1;
                   gameBoard.userIndexX += 1;
 
-                  while(gameBoard.userInputLetters[1][0] != null){
-                  for(int i = 0; i < 20; i++){
-                      if(gameBoard.userWords[i][0] == gameBoard.userWords[i+1][0] &&
-                      gameBoard.userWords[i][1] != gameBoard.userWords[i+1][1]){
-                        if(gameBoard.userWords[i+1][1] == gameBoard.userWords[i][1] + 50){
-                        validDirection = true;
-                      }
-                      }
-                      else if(gameBoard.userWords[i][0] != gameBoard.userWords[i+1][0] &&
-                        gameBoard.userWords[i][1] == gameBoard.userWords[i+1][1]){
-                          if(gameBoard.userWords[i+1][0] == gameBoard.userWords[i][0] + 50){
-                            validDirection = true;
-                          }
-                        }
-                  }
-                }
-              }
-                else {
-                  validDirection = false;
-                }
+
+                  //while(gameBoard.userWords[1][0] != 0){
+
+              //  else {
+                //  validDirection = true;
+              //  }
                 if(code == '\n'){
-                select = false;
-                for(int i = 0; i < gameBoard.userIndexX; i++ ){
-                gameBoard.userWords[i][0] = 0;
-                gameBoard.userWords[i][1] = 0;
+                  select = false;
+                  // ensure that user is selecting letters in
+                  // down direction
+                validDirection = true;
+                for(int i = 0; i < gameBoard.userIndexX; i++){
+                    if(!(gameBoard.userWords[i][0] == gameBoard.userWords[i+1][0]+1 &&
+                    gameBoard.userWords[i][1] == gameBoard.userWords[i+1][1])){
+                    //  if(gameBoard.userWords[i+1][1] == gameBoard.userWords[i][1] + 50){
+                      validDirection = false;
+                    }
+                }
+
+                // ensure right direction
+                for(int i = 0; i < gameBoard.userIndexX; i++){
+                    if(!(gameBoard.userWords[i][0] == gameBoard.userWords[i+1][0] &&
+                      gameBoard.userWords[i][1] == gameBoard.userWords[i+1][1]+1)){
+                  //      if(gameBoard.userWords[i+1][0] == gameBoard.userWords[i][0] + 50){
+                          validDirection = false;
+                    }
+                }
+              if(validDirection == true){
+                gameBoard.update(gameBoard.userWords);
               }
-              gameBoard.userIndexX = 0;
-              gameBoard.userIndexY = 0;
-            }
-            System.out.println(validDirection);
+              else{
+                gameBoard.userWords = new int[20][2];
+              }
+
+            } // close if statement for the enter (to check if valid selection)
+
+
+              //   for(int i = 0; i < gameBoard.userIndexX; i++ ){
+              //   gameBoard.userWords[i][0] = 0;
+              //   gameBoard.userWords[i][1] = 0;
+              // }
+              // gameBoard.userIndexX = 0;
+              // // gameBoard.userIndexY = 0;
+                }
+                System.out.println(validDirection);
 
           }
 
@@ -170,18 +187,22 @@ public void paintComponent(Graphics g) {
       g.drawLine(i, j, WIDTH, j);
     }
   }
-  gameBoard.drawPointer(g);
   gameBoard.selectLetter(g);
+  if(validDirection == false){
+    gameBoard.resetBoard(g);
+  }
+  gameBoard.drawPointer(g);
   g.setColor(Color.WHITE);
   g.setFont(new Font("TimesRoman", Font.BOLD, 35));
-  gameboard.drawLetters(g);
-  for(int i = 0; i < 20; i++){
-    for(int j = 0; j < 20; j++){
-      // for(int k = 0; k < currentWords.length - 1; k++){
-      // for(int l = 0; l < currentWords[l].length() - 1; l++)
-     g.drawString(String.valueOf(gameBoard.board[i][j].letter), i * 50 + 5, j * 50 + 40);
-    }
-  }
+  gameBoard.drawLetters(g);
+
+  // for(int i = 0; i < 20; i++){
+  //   for(int j = 0; j < 20; j++){
+  //     // for(int k = 0; k < currentWords.length - 1; k++){
+  //     // for(int l = 0; l < currentWords[l].length() - 1; l++)
+  //    // g.drawString(String.valueOf(gameBoard.board[i][j].letter), i * 50 + 5, j * 50 + 40);
+  //   }
+  // }
 }
 
 
@@ -191,7 +212,7 @@ public void paintComponent(Graphics g) {
 
 
 public class Board {
-  public static int N = 20; // length of square board
+  public final int N = 20; // length of square board
   Letter[][] board = new Letter[N][N];
   int currentX = 0;
   int currentY = 0;
@@ -207,7 +228,7 @@ public class Board {
   public Board() {
     for (int i = 0; i < N; i++) {
       for (int j = 0; j < N; j++) {
-        board[i][j] = new Letter(' ', i, j, 0, "RED");
+        board[i][j] = new Letter();
         // XX
       }
     }
@@ -217,12 +238,15 @@ public class Board {
     System.out.println();
     for (int i = 0; i < N; i++) {
       for (int j = 0; j < N; j++) {
-        System.out.print(board[i][j].letter + " ");
+        System.out.print(board[i][j].Char + " ");
       }
       System.out.println();
     }
   }
 
+// public void updateLetters(){
+//   board[i][j] = update();
+// }
 
   public void fillBoard(String[] words) {
     char[][] test = new char[N][N];
@@ -258,23 +282,31 @@ public class Board {
         else
           col += 1;
       }
+      // to populate words in alternating directions
       if (down == true)
         down = false;
       else
         down = true;
     }
+
+    // once we verify that the word fits in the matrix
+    // we feed the letters from the test array into the board
     for (int q = 0; q < N; q++) {
       for (int s = 0; s < N; s++) {
         if (test[q][s] != ' ') {
-          board[q][s].letter = test[q][s];
+          board[q][s].Char = test[q][s];
+          System.out.println(board[q][s].Char);
         }
-        else
-          board[q][s].letter = (char)(r.nextInt(26)+65);
-      }
+        else{
+          board[q][s].Char = (char)(r.nextInt(26)+65);
+        }
+    board[q][s].position.x = 50*s;
+    board[q][s].position.y = 50*q;
     }
-  }
+    }
+  } // fillBoard method
 
-  public static boolean isValidPlacement(char[][] test, int row, int col, int length, boolean down) {
+  public boolean isValidPlacement(char[][] test, int row, int col, int length, boolean down) {
     for (int x = 0; x < length; x++) {
       if (test[row][col] != ' ')
         return false;
@@ -296,29 +328,13 @@ public class Board {
     public void drawLetters(Graphics g){
         for (int i = 0; i < N; i++){
           for(int j = 0; j < N; j ++){
-            board[i].draw(g);
+            board[i][j].draw(g);
           }
         }
     }
 
-
-  public void remove(int startX, int startY, int endX, int endY) {
-    if (startX == endX) {
-      for (int i = startY; i < endY; i++){
-        board[i][endX].letter = ' ';
-      }
-    }
-
-    else {
-      for (int i = startX; i < endX; i++){
-        board[endY][i].letter = ' ';
-      }
-    }
-    siftDown();
-  }
-
   public void selectLetter(Graphics g){
-    if(select == true){
+  //  if(select == true && validDirection == true){
     for(int i = 0; i < gameBoard.userIndexX; i++ ){
       // for (int j = 0; j <  gameBoard.userIndexY ; j++){
         g.setColor(Color.GREEN);
@@ -326,29 +342,48 @@ public class Board {
 
       //}
       }
-      gameBoard.userIndexY = 0;
-    //  gameBoard.selectLetter(g);
+    }
+
+  public void resetBoard(Graphics g) {
+      for(int i = 0; i < gameBoard.userIndexX; i++ ){
+        // for (int j = 0; j <  gameBoard.userIndexY ; j++){
+          g.setColor(Color.GRAY);
+          g.fillRect(gameBoard.userWords[i][0], gameBoard.userWords[i][1], 50, 50);
+      }
   }
+        //}
+
+  //    gameBoard.userIndexY = 0;
+    //  gameBoard.selectLetter(g);
+
     // g.setColor(Color.GREEN);
     //
     // g.fillRect(currentX, currentY, 50, 50);
   //  userInputLetters[][] = board[trackX][trackY];
   //  userInputString = String.valueOf(userInputLetters[inputLettersIndex]);
     //System.out.println(userInputString);
-  }
 
   public void saveWord(){
 
   }
 
+  public void update(int[][] userWords){ //removes word + calls sift to update board
+    for(int i = 0; i < userIndexX ; i++){
+      board[userWords[i][0]][userWords[i][1]].Char = ' ';
+    }
+    userWords = new int[20][2];
+    userIndexX = 0;
+    siftDown();
+  }
+
   public void siftDown() {
-    for (int i = 0; i < N; i++) {
-      for (int j = N-2; j >= 0; j--) {
+    for (int i = 0; i < 20; i++) {
+      for (int j = 18; j > 0; j--) {
         for (int k = 0; k < N; k++) {
-          if (board[j+1][k].letter == ' ') {
-            char hold = board[j][k].letter;
-            board[j][k].letter = board[j+1][k].letter;
-            board[j+1][k].letter = hold;
+          if (board[j+1][k].Char == ' ') {
+            char hold = board[j][k].Char;
+            board[j][k].Char = board[j+1][k].Char;
+            board[j+1][k].Char = hold;
           }
         }
       }
@@ -377,29 +412,21 @@ class Letter{
 
   public Letter(){
     Random r = new Random();
-    Char = (char)(r.nextInt(26)+65);
+    Char = ' ';
     position = new Pair(0.0, 0.0);
     velocity = new Pair(0.0, 0.0);
-    color = new Color(255.0, 255.0, 255.0);
+    color = new Color(255, 255, 255);
   }
-}
 
-public void update(Board gameBoard, Letters[][] userWord){
-for(int i = 19; i >= 0 ; i--){
-  for (int j = 19; j >= 0; j--){
-    if (gameboard)
-
-
-  }
-  }
-  //position.x = position.x + 50;
-}
 
 public void draw(Graphics g){
 g.setColor(color);
-String s=Character.toString(Char);
-g.drawString(s, position.x, position.y);
+String s = Character.toString(Char);
+g.drawString(s, (int)position.x, (int)position.y);
 }
+}
+
+
 
 ////////////////////////////////
 /////// PAIR Class
