@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import java.util.*;
 import java.io.*;
 import javax.swing.JPanel;
@@ -36,20 +35,6 @@ public Game(){
 	mainThread.start();
 }
   public static void main (String[] args) {
-    //gameBoard.printBoard();
-    //
-    // int placeholder = getUserInput();
-    //
-    // int startX = 0;
-    // int startY = 0;
-    // int endX = 0;
-    // int endY = 0;
-    // // gameBoard.remove(10, 10, 19, 10);
-    // // gameBoard.printBoard();
-    // // gameBoard.remove(2, 3, 2, 18);
-    // // gameBoard.printBoard();
-    //
-    //
     JFrame frame = new JFrame("WordSearch");
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     frame.setContentPane(new Game());
@@ -57,40 +42,6 @@ public Game(){
     frame.setVisible(true);
   }
 
-
-
-// public void play() {
-//   ArrayList<String> wordList = readInText("AnimalsCategory.txt");
-//
-//   // gameBoard = new Board();
-//
-//   int numberOfWords = 6;
-//   String[] currentWords = getWords(numberOfWords, wordList);
-//
-//   this.gameBoard.fillBoard(currentWords);
-//   this.gameBoard.printBoard();
-//
-//   int placeholder = getUserInput();
-//
-//   int startX = 0;
-//   int startY = 0;
-//   int endX = 0;
-//   int endY = 0;
-//   // gameBoard.remove(10, 10, 19, 10);
-//   // gameBoard.printBoard();
-//   // gameBoard.remove(2, 3, 2, 18);
-//   // gameBoard.printBoard();
-//
-//
-//   JFrame frame = new JFrame("WordSearch");
-//   frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//   frame.setContentPane(new Game());
-//   frame.pack();
-//   frame.setVisible(true);
-// }
-// public void fillGraphicsBoard(String[] currentWords){
-//   gameBoard = gameBoard.fillBoard(currentWords);
-// }
 
   public static ArrayList<String> readInText(String filename) {
     File file = new File(filename);
@@ -244,66 +195,230 @@ if(select == true){
 }
 
 
-
-} // Game class
-=======
-import java.util.*;
-import java.io.*;
-public class Game {
-
-  public static void main (String[] args) {
-    ArrayList<String> wordList = readInText("AnimalsCategory.txt");
-
-    Board gameBoard = new Board();
-
-    int numberOfWords = 6;
-    String[] currentWords = getWords(numberOfWords, wordList);
-
-    gameBoard.fillBoard(currentWords);
-    gameBoard.printBoard();
-
-    int placeholder = getUserInput();
-
-    int startX = 0;
-    int startY = 0;
-    int endX = 0;
-    int endY = 0;
-    gameBoard.remove(10, 10, 19, 10);
-    gameBoard.printBoard();
-    gameBoard.remove(2, 3, 2, 18);
-    gameBoard.printBoard();
-  }
+////////////////////////////////
+/////// BOARD Class
+////////////////////////////////
 
 
-  public static ArrayList<String> readInText(String filename) {
-    File file = new File(filename);
-    ArrayList<String> animals = new ArrayList<String>();
-    try {
-      Scanner sc = new Scanner(file);
-      while (sc.hasNextLine()) {
-        animals.add(sc.nextLine());
+public class Board {
+  public static int N = 20; // length of square board
+  Letter[][] board = new Letter[N][N];
+  int currentX = 0;
+  int currentY = 0;
+  int trackX = 0;
+  int trackY = 0;
+  int userIndexX = 0;
+  int userIndexY = 0 ;
+  int[][] userInputLetters = new int[20][2];
+  int inputLettersIndex = -1;
+  String userInputString = null;
+  // public static boolean select = false;
+
+  public Board() {
+    for (int i = 0; i < N; i++) {
+      for (int j = 0; j < N; j++) {
+        board[i][j] = new Letter(' ', i, j, 0, "RED");
       }
-      sc.close();
     }
-    catch (FileNotFoundException e) {
-      System.out.println("File not found.");
-    }
-    return animals;
   }
 
-  public static String[] getWords(int n, ArrayList<String> words) {
+  public void printBoard() {
+    System.out.println();
+    for (int i = 0; i < N; i++) {
+      for (int j = 0; j < N; j++) {
+        System.out.print(board[i][j].letter + " ");
+      }
+      System.out.println();
+    }
+  }
+
+
+  public void fillBoard(String[] words) {
+    char[][] test = new char[N][N];
+    for (int a = 0; a < N; a++) {
+      for (int b = 0; b < N; b++) {
+        test[a][b] = ' ';
+      }
+    }
+    boolean fits = false;
     Random r = new Random();
-    String[] toReturn = new String[n];
-    for (int i = 0; i < n; i++) {
-      int w = r.nextInt(words.size());
-      toReturn[i] = words.get(w);
+    boolean down = true; // go down first
+    int col = 0;
+    int row = 0;
+    int wordLength = 0;
+    for (int i = 0; i < words.length; i++) {
+      fits = false;
+      while (fits == false) {
+        wordLength = words[i].length();
+        if (down == true) { // word going down
+          row = r.nextInt(N - wordLength);
+          col = r.nextInt(N);
+        }
+        else { // word going right
+          col = r.nextInt(N - wordLength);
+          row = r.nextInt(N);
+        }
+        fits = isValidPlacement(test, row, col, wordLength, down);
+      }
+      for (int z = 0; z < wordLength; z++) {
+        test[row][col] = words[i].charAt(z);
+        if (down == true)
+          row += 1;
+        else
+          col += 1;
+      }
+      if (down == true)
+        down = false;
+      else
+        down = true;
     }
-    return toReturn;
+    for (int q = 0; q < N; q++) {
+      for (int s = 0; s < N; s++) {
+        if (test[q][s] != ' ') {
+          board[q][s].letter = test[q][s];
+        }
+        else
+          board[q][s].letter = (char)(r.nextInt(26)+65);
+      }
+    }
   }
 
-  public static int getUserInput() {
-    return 0;
+  public static boolean isValidPlacement(char[][] test, int row, int col, int length, boolean down) {
+    for (int x = 0; x < length; x++) {
+      if (test[row][col] != ' ')
+        return false;
+      else {
+        if (down == true)
+          row += 1;
+        else
+          col += 1;
+      }
+    }
+    return true;
   }
+
+  public void drawPointer(Graphics g){
+      g.setColor(Color.BLUE);
+      g.fillRect(currentX, currentY, 50, 50);
+    }
+
+
+
+  public void remove(int startX, int startY, int endX, int endY) {
+    if (startX == endX) {
+      for (int i = startY; i < endY; i++){
+        board[i][endX].letter = ' ';
+      }
+    }
+
+    else {
+      for (int i = startX; i < endX; i++){
+        board[endY][i].letter = ' ';
+      }
+    }
+    siftDown();
+  }
+
+  public void selectLetter(Graphics g){
+    // g.setColor(Color.GREEN);
+    //
+    // g.fillRect(currentX, currentY, 50, 50);
+  //  userInputLetters[][] = board[trackX][trackY];
+  //  userInputString = String.valueOf(userInputLetters[inputLettersIndex]);
+    //System.out.println(userInputString);
+  }
+
+  public void saveWord(){
+
+  }
+
+  public void siftDown() {
+    for (int i = 0; i < N; i++) {
+      for (int j = N-2; j >= 0; j--) {
+        for (int k = 0; k < N; k++) {
+          if (board[j+1][k].letter == ' ') {
+            char hold = board[j][k].letter;
+            board[j][k].letter = board[j+1][k].letter;
+            board[j+1][k].letter = hold;
+          }
+        }
+      }
+    }
+  }
+
+  // public String getChar(String[] words){
+  //   for(int k = 0; k < words.length - 1; k++){
+  //   for(int l = 0; l < words[l].length() - 1; l++)
+  //         test[row][col] = words[i].charAt(z);
+  // }
+
 
 }
->>>>>>> 6af2549613a9cd8f32664b27a2d71f6ca10c8fd1
+
+////////////////////////////////
+/////// LETTER Class
+////////////////////////////////
+
+class Letter{
+  char Char;
+  Pair position;
+  Pair velocity;
+  Color color;
+  Pair size;
+
+  public Letter(){
+    Random r = new Random();
+    char = (char)(r.nextInt(26)+65);
+    position = new Pair(0.0, 0.0);
+    velocity = = new Pair(0.0, 0.0);
+    color = new Color(255.0, 255.0, 255.0);
+  }
+}
+
+public void update(Board gameBoard){
+  position.x = position.x + 50;
+}
+
+////////////////////////////////
+/////// PAIR Class
+/////// TAKEN FROM OOBOUNCING
+////////////////////////////////
+
+class Pair{
+  double x;
+  double y;
+  public Pair(double x, double y){
+    this.x = x;
+    this.y = y;
+  }
+  public Pair add(Pair p){
+  Pair pair = new Pair(0, 0);
+  pair.x = this.x + p.x;
+  pair.y = this.y + p.y;
+  return pair;
+}
+  public Pair times(double t){
+    Pair pair = new Pair(0, 0);
+    pair.x = this.x * t;
+    pair.y = this.y * t;
+    return pair;
+  }
+  public void flipX(){
+    this.x = - this.x;
+    this.y = this.y;
+  }
+  public void flipY(){
+    this.x = this.x;
+    this.y = - this.y;
+  }
+  public Pair divide(double d){
+    Pair pair = new Pair(0, 0);
+    pair.x = this.x / d;
+    pair.y = this.y / d;
+    return pair;
+  }
+}
+
+
+
+} // Game class
