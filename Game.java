@@ -127,14 +127,14 @@ public void run(){
               //  else {
                 //  validDirection = true;
               //  }
-                if(code == '\n'){
+                if(code == '\n'){ //PUT IN CONDITION THAT CHECKS IF +20 CHARACTER WORD CHOSEN, THEN STOPS USER, SAYS INVALID WORD, RESETS USERWORDS  + USERINDEXX
                   enter = true;
                   //select = false;
 
                   // ensure that user is selecting letters in
                   // down direction
                 System.out.println("Pressed enter -- Valid Direction is initialized as " + validDirection);
-                for(int i = 0; i < gameBoard.userIndexX; i++){
+                for(int i = 0; i < gameBoard.userIndexX-1; i++){
                   if(gameBoard.userWords[i][0] == gameBoard.userWords[i+1][0] &&
                     gameBoard.userWords[i][1] == (gameBoard.userWords[i+1][1])-50)
                     {
@@ -144,22 +144,37 @@ public void run(){
                     //  if(gameBoard.userWords[i+1][1] == gameBoard.userWords[i][1] + 50){
                       validDirection = true;
                       System.out.println("This is supposed to be how many letters are chosen " + gameBoard.userIndexX);
-
                     }
+                    // check right direction
+                    else if(gameBoard.userWords[i][0] == (gameBoard.userWords[i+1][0])-50 &&
+                    gameBoard.userWords[i][1] == gameBoard.userWords[i+1][1]){
+                      System.out.println("Entered right direction for loop");
+                      System.out.println("UserWord col: " + gameBoard.userWords[i][0]);
+                      System.out.println("UserWord row: " + gameBoard.userWords[i][1]);
+                    //      if(gameBoard.userWords[i+1][0] == gameBoard.userWords[i][0] + 50){
+                            validDirection = true;
+                            System.out.println("This is supposed to be how many letters are chosen " + gameBoard.userIndexX);
+                      }
+                      else {
+                        System.out.println("Invalid direction - create new word");
+                        gameBoard.userWords = new int[20][2];
+                        validDirection = false;
+                     }
                 }
 
-                // right direction
-                for(int i = 0; i < gameBoard.userIndexX; i++){
-                  if(gameBoard.userWords[i][0] == (gameBoard.userWords[i+1][0])-50 &&
-                  gameBoard.userWords[i][1] == gameBoard.userWords[i+1][1]){
-                    System.out.println("Entered right direction for loop");
-                    System.out.println("UserWord col: " + gameBoard.userWords[i][0]);
-                    System.out.println("UserWord row: " + gameBoard.userWords[i][1]);
-                  //      if(gameBoard.userWords[i+1][0] == gameBoard.userWords[i][0] + 50){
-                          validDirection = true;
-                          System.out.println("This is supposed to be how many letters are chosen " + gameBoard.userIndexX);
-                    }
-                }
+                // // right direction
+                // for(int i = 0; i < gameBoard.userIndexX; i++){
+                //   if(gameBoard.userWords[i][0] == (gameBoard.userWords[i+1][0])-50 &&
+                //   gameBoard.userWords[i][1] == gameBoard.userWords[i+1][1]){
+                //     System.out.println("Entered right direction for loop");
+                //     System.out.println("UserWord col: " + gameBoard.userWords[i][0]);
+                //     System.out.println("UserWord row: " + gameBoard.userWords[i][1]);
+                //   //      if(gameBoard.userWords[i+1][0] == gameBoard.userWords[i][0] + 50){
+                //           validDirection = true;
+                //           System.out.println("This is supposed to be how many letters are chosen " + gameBoard.userIndexX);
+                //     }
+                 }
+
 
            // close if statement for the enter (to check if valid selection)
 
@@ -170,7 +185,7 @@ public void run(){
               // }
               // gameBoard.userIndexX = 0;
               // // gameBoard.userIndexY = 0;
-        }
+        // }
       }
 
       public void keyTyped(KeyEvent e) {
@@ -201,13 +216,16 @@ public void paintComponent(Graphics g) {
   }
   if(enter == true){
       if(validDirection == true){
-        System.out.println("update method got called");
+        System.out.println("Words were removed");
         gameBoard.selectLetter(g);
         gameBoard.update(gameBoard.userWords);
+        //gameBoard.userWords = new int[20][2];
+        //gameBoard.userIndexX = 0;
       }
-      else{
-        System.out.println("update method didn't get called");
-        gameBoard.userWords = new int[20][2];
+      if(validDirection == false){
+        System.out.println("In if statements that call update" + validDirection);
+        gameBoard.resetUserWords(gameBoard.userWords);
+
       }
     }
 
@@ -218,14 +236,6 @@ public void paintComponent(Graphics g) {
   g.setColor(Color.WHITE);
   g.setFont(new Font("TimesRoman", Font.BOLD, 35));
   gameBoard.drawLetters(g);
-
-  // for(int i = 0; i < 20; i++){
-  //   for(int j = 0; j < 20; j++){
-  //     // for(int k = 0; k < currentWords.length - 1; k++){
-  //     // for(int l = 0; l < currentWords[l].length() - 1; l++)
-  //    // g.drawString(String.valueOf(gameBoard.board[i][j].letter), i * 50 + 5, j * 50 + 40);
-  //   }
-  // }
 }
 
 
@@ -242,7 +252,7 @@ public class Board {
   // int userIndexX = 0;
   // int userIndexY = 0;
   int userIndexX = 0;
-  int userIndexY = 0 ;
+  //int userIndexY = 0 ;
   int[][] userWords = new int[20][2];
   int inputLettersIndex = -1;
   // String userInputString = null;
@@ -392,15 +402,24 @@ public class Board {
 /// END OF NEW XX
 
   public void update(int[][] userWords){ //removes word + calls sift to update board
+    System.out.println("Went into update");
     for(int i = 0; i < userIndexX ; i++){
       board[(userWords[i][1])/50][(userWords[i][0])/50].Char = ' ';
-    }
-    userWords = new int[20][2];
-    userIndexX = 0;
-    validDirection = false;
-    enter = false;
+  }
+    resetUserWords(userWords);
     siftDown();
   }
+
+  public void resetUserWords(int[][] userWords){
+    System.out.println("Went into resetUserWords method");
+    for(int i = 0; i < 20; i++){
+    userWords[i][0] = 0;
+    userWords[i][1] = 0;
+  }
+  userIndexX = 0;
+  validDirection = false;
+  enter = false;
+}
 
   public void siftDown() {
     System.out.println("SiftDown method got called");
