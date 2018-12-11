@@ -13,22 +13,22 @@ import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
 
 public class Game extends JPanel implements KeyListener{
+  //Timer timer = new Timer(1000, new TimerListener());
     final int FPS = 60;
-    final int SCREENWIDTH = 1300;
-    final int SCREENHEIGHT = 800;
+    final int SCREENWIDTH = 1000;
     final int WIDTH = 800;
     final int HEIGHT = 800;
+    final int TIME_GIVEN = 10;
     Board gameBoard = null;
-    // boolean select = false;
     boolean validDirection = false;
     boolean enter = false;
+    boolean choosingWord = false;
+    long startTime = System.currentTimeMillis();
 
 
     public Game(){
-	this.setPreferredSize(new Dimension(SCREENWIDTH, SCREENHEIGHT));
+	this.setPreferredSize(new Dimension(SCREENWIDTH, HEIGHT));
 	addKeyListener(this);
-	// gameBoard = new Board();
-
 	gameBoard = new Board();
 	ArrayList<String> wordList = readInText("AnimalsCategory.txt");
 	int numberOfWords = 6;
@@ -37,6 +37,7 @@ public class Game extends JPanel implements KeyListener{
 	Thread mainThread = new Thread(new Runner());
 	mainThread.start();
     }
+
     public static void main (String[] args) {
 	JFrame frame = new JFrame("WordSearch");
 	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -81,7 +82,7 @@ public class Game extends JPanel implements KeyListener{
 	    while(true){
 		repaint();
 		try{
-		    Thread.sleep(1000/FPS);
+		    Thread.sleep(800/FPS);
 		}
 		catch(InterruptedException e){}
 	    }
@@ -89,156 +90,96 @@ public class Game extends JPanel implements KeyListener{
     }
 
     public void trackOfKeys(){
-      gameBoard.userWords[gameBoard.userIndexX][0] = gameBoard.currentX;
-      gameBoard.userWords[gameBoard.userIndexX][1] = gameBoard.currentY;
-      System.out.println("Blue box position:" + gameBoard.currentX + ", " + gameBoard.currentY);
-      System.out.println("User letter choice position:" + gameBoard.userWords[gameBoard.userIndexX][0] + ", " + gameBoard.userWords[gameBoard.userIndexX][1]);
-      gameBoard.userIndexX += 1;
-    }
+      if(gameBoard.userIndexX == 20){
+    	    System.out.println("Invalid Word Entry - try again!");
+    	    gameBoard.resetUserWords(gameBoard.userWords);
+    	    choosingWord = false;
+    	}
+      else{
+ gameBoard.userWords[gameBoard.userIndexX][0] = gameBoard.currentX;
+ gameBoard.userWords[gameBoard.userIndexX][1] = gameBoard.currentY;
+ System.out.println("Blue box position:" + gameBoard.currentX + ", " + gameBoard.currentY);
+ System.out.println("User letter choice position:" + gameBoard.userWords[gameBoard.userIndexX][0] + ", " + gameBoard.userWords[gameBoard.userIndexX][1]);
+ gameBoard.userIndexX += 1;
+}
+   }
+
 
     public void keyPressed(KeyEvent e) {
-          int code = e.getKeyCode();
-	  if (code == KeyEvent.VK_DOWN) {
-	      gameBoard.currentY = gameBoard.currentY + 40;
-	  }
-	  if (code == KeyEvent.VK_UP) {
-	      gameBoard.currentY = gameBoard.currentY - 40;
-	  }
-	  if (code == KeyEvent.VK_LEFT) {
-	      gameBoard.currentX = gameBoard.currentX - 40;
-	  }
-	  if (code == KeyEvent.VK_RIGHT) {
-	      gameBoard.currentX = gameBoard.currentX + 40;
-	  }
-
-    if (code == 'q' || code == 'Q') {
-      gameBoard = new Board();
+             int code = e.getKeyCode();
+   	  if (code == KeyEvent.VK_DOWN) {
+   	      System.out.println("In DOWN");
+   	      gameBoard.currentY = gameBoard.currentY + 40;
+   	      if (choosingWord == true){
+   		  System.out.println("In DOWN  w/ choosingWord TRUE");
+   		  trackOfKeys();
+   	      }
+   	  }
+   	  if (code == KeyEvent.VK_UP) {
+   	      System.out.println("In UP");
+   	      gameBoard.currentY = gameBoard.currentY - 40;
+   	       if (choosingWord == true){
+   		   System.out.println("In UP  w/ choosingWord TRUE");
+   		   trackOfKeys();
+   	      }
+   	  }
+   	  if (code == KeyEvent.VK_LEFT) {
+   	      System.out.println("In LEFT");
+   	      gameBoard.currentX = gameBoard.currentX - 40;
+   	      if (choosingWord == true){
+   		  System.out.println("In LEFT  w/ choosingWord TRUE");
+   		  trackOfKeys();
+   	      }
+   	  }
+   	  if (code == KeyEvent.VK_RIGHT) {
+   	      System.out.println("In RIGHT");
+   	      gameBoard.currentX = gameBoard.currentX + 40;
+   	      if (choosingWord == true){
+   		  System.out.println("In RIGHT  w/ choosingWord TRUE");
+   		  trackOfKeys();
+   	      }
+   	  }
+   	  if (code == KeyEvent.VK_SPACE && choosingWord == true) {
+   	      enter = true;
+   	      System.out.println("In Space w/ choosingWord TRUE");
+   	      // trackOfKeys();
+   	      System.out.println(gameBoard.userIndexX);
+   	      for(int i = 0; i < gameBoard.userIndexX-1; i++){
+   		  if(gameBoard.userWords[i][0] == gameBoard.userWords[i+1][0] &&
+   		     gameBoard.userWords[i][1] == (gameBoard.userWords[i+1][1])-40) {
+   		      //  if(gameBoard.userWords[i+1][1] == gameBoard.userWords[i][1] + 40){
+   		      System.out.println("Down direction worked");
+                         validDirection = true;
+   		  }
+   		  // checking valid right direction
+   		  else if(gameBoard.userWords[i][0] == (gameBoard.userWords[i+1][0])-40 &&
+   			  gameBoard.userWords[i][1] == gameBoard.userWords[i+1][1]){
+   		      System.out.println("Right direction worked");
+   		      validDirection = true;
+   		  }
+   		  else {
+   		      System.out.println("Invalid direction - create new word");
+   		      gameBoard.userWords = new int[20][2];
+   		      validDirection = false;
+   		  }
+   	      }
+   	      System.out.println(choosingWord);
+   	  }
+   	  if (code == KeyEvent.VK_SPACE && choosingWord == false) {
+   	      System.out.println("In Space w/ choosingWord FALSE");
+   	      choosingWord = true;
+   	      System.out.println("choosingWord = " + choosingWord);
+   	      gameBoard.userWords[gameBoard.userIndexX][0] = gameBoard.currentX;
+   	      gameBoard.userWords[gameBoard.userIndexX][1] = gameBoard.currentY;
+   	      System.out.println("Position of letter that begins word:" + gameBoard.currentX + ", " + gameBoard.currentY);
+   	      System.out.println("User letter choice position:" + gameBoard.userWords[gameBoard.userIndexX][0] + ", " + gameBoard.userWords[gameBoard.userIndexX][1]);
+   	      gameBoard.userIndexX += 1;
+        }
+        // if(code == 's' || code == 'S'){
+        //   String[] currentWords = getWords((numberOfWords - gameBoard.countOfValidWords), wordList);
+        //   gameBoard.shufflePosition(currentWords);
+        // }
     }
-    if (code == 's' || code == 'S') {
-
-    }
-    ////////
-    ////////SPACE BAR
-    ////////START OF ADDED STUFF TO MINIMIZE USE OF SPACE BAR
-    if (code == KeyEvent.VK_SPACE) {
-      if (code == KeyEvent.VK_DOWN) {
-  	      gameBoard.currentY = gameBoard.currentY + 40;
-            trackOfKeys();
-  	  }
-  	  if (code == KeyEvent.VK_UP) {
-  	      gameBoard.currentY = gameBoard.currentY - 40;
-            trackOfKeys();
-  	  }
-  	  if (code == KeyEvent.VK_LEFT) {
-  	      gameBoard.currentX = gameBoard.currentX - 40;
-            trackOfKeys();
-      }
-  	  if (code == KeyEvent.VK_RIGHT) {
-  	      gameBoard.currentX = gameBoard.currentX + 40;
-            trackOfKeys();
-  	  }
-      if (code == KeyEvent.VK_SPACE){
-        enter = true;
-        // ensure that user is selecting letters in
-        // down direction
-System.out.println("Pressed enter -- Valid Direction is initialized as " + validDirection);
-for(int i = 0; i < gameBoard.userIndexX-1; i++){
-if(gameBoard.userWords[i][0] == gameBoard.userWords[i+1][0] &&
-gameBoard.userWords[i][1] == (gameBoard.userWords[i+1][1])-40){
-  System.out.println("Entered down direction for loop");
-  System.out.println("UserWord col: " + gameBoard.userWords[i][0]);
-  System.out.println("UserWord row: " + gameBoard.userWords[i][1]);
-  //  if(gameBoard.userWords[i+1][1] == gameBoard.userWords[i][1] + 40){
-            validDirection = true;
-            System.out.println("This is supposed to be how many letters are chosen " + gameBoard.userIndexX);
-}
-// check right direction
-else if(gameBoard.userWords[i][0] == (gameBoard.userWords[i+1][0])-40 &&
-  gameBoard.userWords[i][1] == gameBoard.userWords[i+1][1]){
-System.out.println("Entered right direction for loop");
-System.out.println("UserWord col: " + gameBoard.userWords[i][0]);
-System.out.println("UserWord row: " + gameBoard.userWords[i][1]);
-//      if(gameBoard.userWords[i+1][0] == gameBoard.userWords[i][0] + 40){
-validDirection = true;
-System.out.println("This is supposed to be how many letters are chosen " + gameBoard.userIndexX);
-            }
-            else {
-System.out.println("Invalid direction - create new word");
-gameBoard.userWords = new int[20][2];
-validDirection = false;
-}
-      }
-      ////////
-      ////////SPACE BAR
-      ////////END OF ADDED STUFF TO MINIMIZE USE OF SPACE BAR
-
-                  // select the box that has the tracker blue box
-                  // gameBoard.userWords[gameBoard.userIndexX][0] = gameBoard.currentX;
-                  // gameBoard.userWords[gameBoard.userIndexX][1] = gameBoard.currentY;
-                  // System.out.println("Blue box position:" + gameBoard.currentX + ", " + gameBoard.currentY);
-                  // System.out.println("User letter choice position:" + gameBoard.userWords[gameBoard.userIndexX][0] + ", " + gameBoard.userWords[gameBoard.userIndexX][1]);
-                  // gameBoard.userIndexX += 1;
-	      }
-
-	      if(code == '\n'){ //PUT IN CONDITION THAT CHECKS IF +20 CHARACTER WORD CHOSEN, THEN STOPS USER, SAYS INVALID WORD, RESETS USERWORDS  + USERINDEXX
-                  enter = true;
-                  // ensure that user is selecting letters in
-                  // down direction
-		  System.out.println("Pressed enter -- Valid Direction is initialized as " + validDirection);
-		  for(int i = 0; i < gameBoard.userIndexX-1; i++){
-		      if(gameBoard.userWords[i][0] == gameBoard.userWords[i+1][0] &&
-			 gameBoard.userWords[i][1] == (gameBoard.userWords[i+1][1])-40)
-			  {
-			      System.out.println("Entered down direction for loop");
-			      System.out.println("UserWord col: " + gameBoard.userWords[i][0]);
-			      System.out.println("UserWord row: " + gameBoard.userWords[i][1]);
-			      //  if(gameBoard.userWords[i+1][1] == gameBoard.userWords[i][1] + 40){
-                      validDirection = true;
-                      System.out.println("This is supposed to be how many letters are chosen " + gameBoard.userIndexX);
-			  }
-		      // check right direction
-		      else if(gameBoard.userWords[i][0] == (gameBoard.userWords[i+1][0])-40 &&
-			      gameBoard.userWords[i][1] == gameBoard.userWords[i+1][1]){
-			  System.out.println("Entered right direction for loop");
-			  System.out.println("UserWord col: " + gameBoard.userWords[i][0]);
-			  System.out.println("UserWord row: " + gameBoard.userWords[i][1]);
-			  //      if(gameBoard.userWords[i+1][0] == gameBoard.userWords[i][0] + 40){
-			  validDirection = true;
-			  System.out.println("This is supposed to be how many letters are chosen " + gameBoard.userIndexX);
-                      }
-                      else {
-			  System.out.println("Invalid direction - create new word");
-			  gameBoard.userWords = new int[20][2];
-			  validDirection = false;
-		      }
-		  }
-
-		  // // right direction
-		  // for(int i = 0; i < gameBoard.userIndexX; i++){
-		  //   if(gameBoard.userWords[i][0] == (gameBoard.userWords[i+1][0])-40 &&
-		  //   gameBoard.userWords[i][1] == gameBoard.userWords[i+1][1]){
-		  //     System.out.println("Entered right direction for loop");
-		  //     System.out.println("UserWord col: " + gameBoard.userWords[i][0]);
-		  //     System.out.println("UserWord row: " + gameBoard.userWords[i][1]);
-		  //   //      if(gameBoard.userWords[i+1][0] == gameBoard.userWords[i][0] + 40){
-		  //           validDirection = true;
-		  //           System.out.println("This is supposed to be how many letters are chosen " + gameBoard.userIndexX);
-                //     }
-	      }
-
-
-	      // close if statement for the enter (to check if valid selection)
-
-
-              //   for(int i = 0; i < gameBoard.userIndexX; i++ ){
-              //   gameBoard.userWords[i][0] = 0;
-              //   gameBoard.userWords[i][1] = 0;
-              // }
-              // gameBoard.userIndexX = 0;
-              // // gameBoard.userIndexY = 0;
-	      // }
-    }
-  }
 
     public void keyTyped(KeyEvent e) {
         int code = e.getKeyCode();
@@ -258,7 +199,7 @@ validDirection = false;
     public void paintComponent(Graphics g) {
 	super.paintComponent(g);
 	g.setColor(Color.GRAY);
-	g.fillRect(0, 0, SCREENWIDTH, SCREENHEIGHT);
+	g.fillRect(0, 0, SCREENWIDTH, HEIGHT);
 	g.setColor(Color.WHITE);
 	for(int i = 0; i < HEIGHT; i = i + 40){
 	    for(int j = 0; j < WIDTH; j = j + 40){
@@ -274,12 +215,24 @@ validDirection = false;
 	    if(validDirection == false){
 		System.out.println("In if statements that call update" + validDirection);
 		gameBoard.resetUserWords(gameBoard.userWords);
-
 	    }
 	}
 	gameBoard.drawPointer(g);
+	g.setColor(Color.WHITE);
+	g.setFont(new Font("TimesRoman", Font.BOLD, 30));
 	gameBoard.drawLetters(g);
+  gameBoard.drawScore(g);
+  long endTime = System.currentTimeMillis();
+  long timeRemaining = TIME_GIVEN - ((endTime - startTime)/1000);
+  if(timeRemaining > 0){
+    g.drawString("Time: " + Long.toString(timeRemaining), 800, 200);
+  }
+  else{
+    g.drawString("Out of Time ", 800, 200);
     }
+  }
+
+
 
 
     ////////////////////////////////
@@ -291,9 +244,7 @@ validDirection = false;
 	public final int N = 20; // length of square board
 	Letter[][] board = new Letter[N][N];
 	int currentX = 0;
-	int currentY = 40;
-	// int userIndexX = 0;
-	// int userIndexY = 0;
+	int currentY = 0;
 	int userIndexX = 0;
 	//int userIndexY = 0 ;
 	int[][] userWords = new int[20][2];
@@ -333,6 +284,7 @@ validDirection = false;
 	    int col = 0;
 	    int row = 0;
 	    int wordLength = 0;
+
 	    for (int i = 0; i < words.length; i++) {
 		fits = false;
 		while (fits == false) {
@@ -398,14 +350,18 @@ validDirection = false;
 	}
 
 	public void drawLetters(Graphics g){
-    g.setColor(Color.WHITE);
-    g.setFont(new Font("TimesRoman", Font.BOLD, 30));
 	    for (int i = 0; i < N; i++){
 		for(int j = 0; j < N; j ++){
-        board[i][j].draw(g);
+      board[i][j].draw(g);
+		}
+	    }
+	}
+
+
+  public void drawScore(Graphics g){
+    g.setFont(new Font("TimesRoman", Font.BOLD, 20));
+    g.drawString("# of Found Words: " + Integer.toString(countOfValidWords), 800, 100);
   }
-}
-}
 
 	public void selectLetter(Graphics g){
 	    for(int i = 0; i < gameBoard.userIndexX; i++ ){
@@ -419,8 +375,6 @@ validDirection = false;
 	    char[] c = new char[N];
     for(int i = 0; i < userIndexX; i++){
         c[i] = board[(userWords[i][1])/40][(userWords[i][0])/40].Char;
-        System.out.println(userWords[i][1] + "," + userWords[i][0]);
-        System.out.println(board[(userWords[i][1])/40][(userWords[i][0])/40].position);
 
     }
     String userInputString = new String(c);
@@ -437,7 +391,7 @@ validDirection = false;
 	word = word.trim();
 		System.out.println("In checkWord for loop");
 		System.out.println("userInputString: " + userInputString);
-		System.out.println("AnimalsCategory word :" + word);
+		// System.out.println("AnimalsCategory word :" + word);
 		//TA said that there are characters being added to our words... how to fix that?
 		if ((userInputString).equals(word)){
 		    System.out.println("Word in list being checked: " +word);
@@ -464,6 +418,7 @@ validDirection = false;
 	    for(int i = 0; i < userIndexX ; i++){
 		board[(userWords[i][1])/40][(userWords[i][0])/40].Char = ' ';
 	    }
+      choosingWord = false;
 	    resetUserWords(userWords);
 	siftDown();
 	}
@@ -494,7 +449,20 @@ validDirection = false;
 	    }
 	}
 
+  public void shufflePosition(String[] currentWords){
+    for(int i = 0; i < 20; i ++){
+      for(int j = 0; j < 20; j ++){
+        if(board[i][j].Char != ' '){
+          gameBoard.fillBoard(currentWords);
+        }
+    siftDown();
+  }
+}
+}
+
+
     }
+
 
     ////////////////////////////////
     /////// LETTER Class
@@ -521,6 +489,7 @@ public void draw(Graphics g){
     String s = Character.toString(Char);
     g.drawString(s, (int)position.x + 15, (int)position.y + 35);
 }
+
     }
 
 
@@ -564,6 +533,19 @@ public void draw(Graphics g){
 	    return pair;
 	}
     }
+
+// class TimerListener implements ActionListener{
+//   int elapsedSecond = 30;
+//
+//   public void actionPerformed(ActionEvent evt){
+//     elapsedSecond--;
+//     timerLabel.setText(elapsedSecond);
+//     if(elapsedSeconds <= 0){
+//       timer.stop();
+//       wrong();
+//     }
+//   }
+// }
 
 
 
