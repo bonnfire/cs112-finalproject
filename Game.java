@@ -606,6 +606,7 @@ public class Game extends JPanel implements KeyListener{
             // }
 
             public void selectLetter(Graphics g){
+              Random rand = new Random();
               for(int i = 0; i < gameBoard.userIndexX; i++ ){
                 g.setColor(Color.GREEN);
                 g.fillRect(gameBoard.userWords[i][0], gameBoard.userWords[i][1], 40, 40);
@@ -663,8 +664,8 @@ public class Game extends JPanel implements KeyListener{
                 }
                 //GREEN-POWERUP: switch rows and columns -- different orientation
                 else if((board[(userWords[i][1])/40][(userWords[i][0])/40].color).equals(new Color(0,255,0))){
-                  for(int j = 0; j < 20; j++){
-                    for(int k = 0; k < 20; k++){
+                  for(int j = 0; j < 5; j++){
+                    for(int k = 0; k < 5; k++){
                       char hold = board[j][k].Char;
                       int holdforBlank = blankPositionMatrix[j][k];
                       board[j][k].Char = board[k][j].Char;
@@ -675,11 +676,14 @@ public class Game extends JPanel implements KeyListener{
                   }
                 }
               }
+              // MAMMOTH PURPLE-POWERUP: flash the answers for half a second (half second rule against the Honor Code, no biggie)
                 else if((board[(userWords[i][1])/40][(userWords[i][0])/40].color).equals(new Color(63,31,105))){
                   flashWords = true;
                   if(flashWords == true){
-
-                  flashWords = false;
+                    board[(userWords[i][1])/40][(userWords[i][0])/40].color = new Color(rand.nextFloat(), rand.nextFloat(), rand.nextFloat());
+                    board[(userWords[i][1])/40][(userWords[i][0])/40].color = new Color(rand.nextFloat(), rand.nextFloat(), rand.nextFloat());
+                    board[(userWords[i][1])/40][(userWords[i][0])/40].color = new Color(rand.nextFloat(), rand.nextFloat(), rand.nextFloat());
+                    flashWords = false;
                   }
 
                 }
@@ -690,17 +694,18 @@ public class Game extends JPanel implements KeyListener{
                 }
                 choosingWord = false;
                 //rese  tUserWords(userWords);
-                siftDown();
                 resetUserWords(userWords);
+                siftDown();
+
             }
 
 
               // resetUserWords() resets the array to allow user to select another word
               public void resetUserWords(int[][] userWords){
 
-                for(int i = 0; i < userIndexX ; i++){
-                  board[(userWords[i][1])/40][(userWords[i][0])/40].color = new Color(255, 255, 255);
-                }
+                for(int i = 0; i < 20; i++){
+                  board[(userWords[i][0])][(userWords[i][1])]].color = new Color(255, 255, 255);
+              }
 
                 System.out.println("Went into resetUserWords method");
                 for(int i = 0; i < 20; i++){
