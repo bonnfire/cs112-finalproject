@@ -49,6 +49,7 @@ public class Game extends JPanel implements KeyListener{
   }
 
   private void setup(){
+    System.out.println("IN SETUP");
     ArrayList<String> wordList = readInText(CATEGORY);
     String[] currentWords = getWords(numberOfWords, wordList);
     gameBoard.fillBoard(currentWords);
@@ -216,19 +217,23 @@ public class Game extends JPanel implements KeyListener{
       }
 
       if(STATE.equals("menu")){
+        System.out.println("In STATE.equals(menu)");
         if(code == '1'){
+              System.out.println("In STATE.equals(menu) ---- 1");
           startTime = System.currentTimeMillis();
           CATEGORY = "AnimalsCategory.txt";
           STATE = "game";
           setup();
         }
         else if(code == '2'){
+          System.out.println("In STATE.equals(menu) ---- 2");
           startTime = System.currentTimeMillis();
           CATEGORY = "ColorsCategory.txt";
           STATE = "game";
           setup();
         }
         else if(code == '3'){
+          System.out.println("In STATE.equals(menu) ---- 3");
           startTime = System.currentTimeMillis();
           CATEGORY = "StateCapitalsCategory.txt";
           STATE = "game";
@@ -246,6 +251,8 @@ public class Game extends JPanel implements KeyListener{
         gameBoard.countOfValidWords = 0;
         if(code == 'm' || code == 'M'){
           STATE = "menu";
+          gameBoard = new Board();
+          gameBoard.countOfValidWords = 0;
         }
         if(code == 'r' || code == 'R'){
           gameBoard.countOfValidWords = 0;
@@ -418,7 +425,7 @@ public class Game extends JPanel implements KeyListener{
       int countOfValidWords = 0;
       int[][] blankPositionMatrix = new int[N][N];
       String[] foundWords = new String[6];
-      int TIME_GIVEN_board;
+      int TIME_GIVEN_board = 100;
 
       public Board() {
         for (int i = 0; i < N; i++) {
@@ -457,6 +464,7 @@ public class Game extends JPanel implements KeyListener{
               row = r.nextInt(N);
             }
             fits = isValidPlacement(test, row, col, wordLength, down, gameBoard.blankPositionMatrix);
+            System.out.println("JUST CHECKED isValidPlacement");
           }
           for (int z = 0; z < wordLength; z++) {
             test[row][col] = words[i].charAt(z);
@@ -471,7 +479,13 @@ public class Game extends JPanel implements KeyListener{
           else
           down = true;
         }
-
+// System.out.println("TEST MATRIX");
+//   for (int i = 0; i<20; i++){
+//       for (int j = 0; j<20; j++){
+//         System.out.print(test[i][j]);
+//     }
+//     System.out.println();
+// }
         // once we verify that the word fits in the matrix
         // we feed the letters from the test array into the board
 
@@ -479,7 +493,7 @@ public class Game extends JPanel implements KeyListener{
           for (int s = 0; s < N; s++) {
             if (blankPositionMatrix[q][s] == 1){
               char c  = test[q][s];
-              if (c == ' '){
+              if (c != ' '){
               //board[q][s].Char = (char)(r.nextInt(26)+65);
               //  board[q][s].Char = '*';
               //}
@@ -489,20 +503,24 @@ public class Game extends JPanel implements KeyListener{
         }
       }
 
-        while(true){
-          int row2 = r.nextInt(20);
-          int col2 = r.nextInt(20);
-          if(board[row2][col2].Char != ' ' ){
-          board[row2][col2].color = new Color(255,0,0);
+       while(true){
+         System.out.println("IN WHILE LOOP TO MAKE POWERUP RED");
+         int row2 = r.nextInt(20);
+         int col2 = r.nextInt(20);
+         if(board[row2][col2].Char != ' ' ){
+         board[row2][col2].color = new Color(255,0,0);
+         System.out.println("In if loop");
           break;
-        }
+       }
+       else {}
+
       }
 
         for (int q = 0; q < N; q++) {
           for (int s = 0; s < N; s++) {
             if(blankPositionMatrix[q][s] == 1){
               char c  = test[q][s];
-              if (c != ' '){
+              if (c == ' '){
                 //board[q][s].Char = (char)(r.nextInt(26)+65);
                  board[q][s].Char = '*';
             }
@@ -510,9 +528,15 @@ public class Game extends JPanel implements KeyListener{
           board[q][s].position.x = 40*s;
           board[q][s].position.y = 40*q;
           }
-        }
 
-    } // fillBoard method
+        }
+//             for (int i = 0; i<20; i++){
+//           for (int j = 0; j<20; j++){
+//             System.out.print(board[i][j].Char);
+//           }
+//           System.out.println();
+// }
+}// fillBoard method
 
     public boolean isValidPlacement(char[][] test, int row, int col, int length, boolean down, int[][] blankPositionMatrix) {
       for (int x = 0; x < length; x++) {
@@ -581,7 +605,7 @@ public class Game extends JPanel implements KeyListener{
     ////CHANGE THIS TO MAKE TEXT READ FROM USER CHOSEN CATEGORY
     public void checkWord(String userInputString){
       boolean validWord = false;
-      ArrayList<String> wordList = readInText("AnimalsCategory.txt");
+      ArrayList<String> wordList = readInText(CATEGORY);
       for(String word : wordList){
         userInputString = userInputString.trim();
         word = word.trim();
@@ -618,13 +642,19 @@ public class Game extends JPanel implements KeyListener{
         blankPositionMatrix[(userWords[i][1])/40][(userWords[i][0])/40] = 0;
       }
       choosingWord = false;
-      resetUserWords(userWords);
-      siftDown();
+      //resetUserWords(userWords);
+        siftDown();
+          resetUserWords(userWords);
     }
 
 
     // resetUserWords() resets the array to allow user to select another word
     public void resetUserWords(int[][] userWords){
+
+      for(int i = 0; i < userIndexX ; i++){
+      board[(userWords[i][1])/40][(userWords[i][0])/40].color = new Color(255, 255, 255);
+      }
+
       System.out.println("Went into resetUserWords method");
       for(int i = 0; i < 20; i++){
         userWords[i][0] = 0;
