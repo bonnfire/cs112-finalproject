@@ -218,6 +218,7 @@ public class Game extends JPanel implements KeyListener{
 
       if(STATE.equals("menu")){
         if(code == '1'){
+          System.out.println("^___^");
           startTime = System.currentTimeMillis();
           CATEGORY = "AnimalsCategory.txt";
           STATE = "game";
@@ -368,7 +369,7 @@ public class Game extends JPanel implements KeyListener{
         //gameBoard.drawWords(g);
 
         long endTime = System.currentTimeMillis();
-      TIME_GIVEN = gameBoard.TIME_GIVEN_board;
+        TIME_GIVEN = gameBoard.TIME_GIVEN_board;
         long timeRemaining = TIME_GIVEN - ((endTime - startTime)/1000);
         if(timeRemaining > 0){
           long min = timeRemaining/60;
@@ -419,7 +420,7 @@ public class Game extends JPanel implements KeyListener{
       int countOfValidWords = 0;
       int[][] blankPositionMatrix = new int[N][N];
       String[] foundWords = new String[6];
-      int TIME_GIVE_board;
+      int TIME_GIVEN_board;
 
       public Board() {
         for (int i = 0; i < N; i++) {
@@ -610,18 +611,19 @@ public class Game extends JPanel implements KeyListener{
     public void update(int[][] userWords){
       for(int i = 0; i < userIndexX ; i++){
       System.out.println("Went into update");
-      if((board[(userWords[i][1])/40][(user Words[i][0])/40].color).equals(new Color(255, 0, 0))){
-        TIME_GIVEN_board = TIME_GIVEN_Board + 30;
+      if((board[(userWords[i][1])/40][(userWords[i][0])/40].color).equals(new Color(255, 0, 0))){
+        TIME_GIVEN_board = TIME_GIVEN_board + 30;
       }
+    }
         for(int i = 0; i < userIndexX ; i++){
         board[(userWords[i][1])/40][(userWords[i][0])/40].Char = ' ';
-        blankPositionMatrix[(userWords[i][1])/40][(userWords[i][0])/40] = 0
+        blankPositionMatrix[(userWords[i][1])/40][(userWords[i][0])/40] = 0;
       }
       choosingWord = false;
       resetUserWords(userWords);
       siftDown();
-      }
     }
+
 
     // resetUserWords() resets the array to allow user to select another word
     public void resetUserWords(int[][] userWords){
@@ -728,4 +730,4 @@ public class Game extends JPanel implements KeyListener{
       }
     }
 }
-  } // Game class                                                                               
+}// Game class                                                                               
