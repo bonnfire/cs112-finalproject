@@ -231,7 +231,7 @@ public class Game extends JPanel implements KeyListener{
         if(code == '1'){
           System.out.println("In STATE.equals(menu) ---- 1");
           startTime = System.currentTimeMillis();
-          CATEGORY = "AnimalsCategory.txt";
+          CATEGORY = "AnimalsCategory.pdf";
           STATE = "game";
           setup();
         }
@@ -442,7 +442,6 @@ public class Game extends JPanel implements KeyListener{
       int[][] blankPositionMatrix = new int[N][N];
       String[] foundWords = new String[6];
       int TIME_GIVEN_board = 100;
-      boolean flashWords;
       Random rand = new Random();
       int score = 0;
 
@@ -514,45 +513,61 @@ public class Game extends JPanel implements KeyListener{
               char c  = test[q][s];
               if (c != ' '){
                 board[q][s].Char = test[q][s];
+                board[q][s].flashWord = true;
               }
             }
           }
         }
-        //MAKE RED POWERUP
-        while(true){
-          int row2 = r.nextInt(20);
-          int col2 = r.nextInt(20);
-          if(board[row2][col2].Char != ' ' ){
-            board[row2][col2].color = new Color(255,0,0);
-            System.out.println(row2 + "     " + col2);
-            System.out.println("In if loop");
-            break;
-          }
-          else {}
 
-          }
-          //MAKE GREEN POWERUP
-          while(true){
+        while(true){
             int row2 = r.nextInt(20);
             int col2 = r.nextInt(20);
             if(board[row2][col2].Char != ' ' ){
-              if(!(board[row2][col2].color).equals(new Color(255, 0, 0))){
-                board[row2][col2].color = new Color(0,255,0);
-                break;
-              }
+              board[row2][col2].color = new Color(255,0,0);
+              System.out.println(row2 + "     " + col2);
+              System.out.println("In if loop");
             }
-          }
-          //MAKE PURPLE POWERUP
-          while(true){
-            int row2 = r.nextInt(20);
-            int col2 = r.nextInt(20);
-            if(board[row2][col2].Char != ' ' ){
-              if(!(board[row2][col2].color).equals(new Color(255, 0, 0)) && !(board[row2][col2].color).equals(new Color(0, 255, 0))){
-                board[row2][col2].color = new Color(63,31,105);
-                break;
-              }
-            }
-          }
+            int row3 = r.nextInt(20);
+            int col3 = r.nextInt(20);
+              break;
+        }
+
+
+        // //MAKE RED POWERUP
+        // while(true){
+        //   int row2 = r.nextInt(20);
+        //   int col2 = r.nextInt(20);
+        //   if(board[row2][col2].Char != ' ' ){
+        //     board[row2][col2].color = new Color(255,0,0);
+        //     System.out.println(row2 + "     " + col2);
+        //     System.out.println("In if loop");
+        //     break;
+        //   }
+        //   else {}
+        //
+        //   }
+        //   //MAKE GREEN POWERUP
+        //   while(true){
+        //     int row2 = r.nextInt(20);
+        //     int col2 = r.nextInt(20);
+        //     if(board[row2][col2].Char != ' ' ){
+        //       if(!(board[row2][col2].color).equals(new Color(255, 0, 0))){
+        //         board[row2][col2].color = new Color(0,255,0);
+        //         break;
+        //       }
+        //     }
+        //   }
+        //   //MAKE PURPLE POWERUP
+        //   while(true){
+        //     int row2 = r.nextInt(20);
+        //     int col2 = r.nextInt(20);
+        //     if(board[row2][col2].Char != ' ' ){
+        //       if(!(board[row2][col2].color).equals(new Color(255, 0, 0)) && !(board[row2][col2].color).equals(new Color(0, 255, 0))){
+        //         board[row2][col2].color = new Color(63,31,105);
+        //         break;
+        //       }
+        //     }
+        //   }
 
           for (int q = 0; q < N; q++) {
             for (int s = 0; s < N; s++) {
@@ -643,7 +658,6 @@ public class Game extends JPanel implements KeyListener{
         ////CHANGE THIS TO MAKE TEXT READ FROM USER CHOSEN CATEGORY
         public void checkWord(String userInputString){
           boolean validWord = false;
-          //boolean flashWords = false;
           ArrayList<String> wordList = readInText(CATEGORY);
           for(String word : wordList){
             userInputString = userInputString.trim();
@@ -690,18 +704,23 @@ public class Game extends JPanel implements KeyListener{
             //     }
             //   }
             // }
+
             // MAMMOTH PURPLE-POWERUP: flash the answers for half a second (half second rule against the Honor Code, no biggie)
             else if((board[(userWords[i][1])/40][(userWords[i][0])/40].color).equals(new Color(63,31,105))){
-              flashWords = true;
-              if(flashWords == true){
-                System.out.println("are you in here?");
-                board[(userWords[i][1])/40][(userWords[i][0])/40].color = new Color(rand.nextFloat(), rand.nextFloat(), rand.nextFloat());
-                board[(userWords[i][1])/40][(userWords[i][0])/40].color = new Color(rand.nextFloat(), rand.nextFloat(), rand.nextFloat());
-                board[(userWords[i][1])/40][(userWords[i][0])/40].color = new Color(rand.nextFloat(), rand.nextFloat(), rand.nextFloat());
-                flashWords = false;
+              for(int j = 1; j < N; j++){
+                for(int k = 1; k < N; k++){
+                  if(board[j][k].flashWord == true){
+                    System.out.println("are you in here, purp?");
+                    board[j][k].color = new Color(rand.nextFloat(), rand.nextFloat(), rand.nextFloat());
+                    board[j][k].color = new Color(rand.nextFloat(), rand.nextFloat(), rand.nextFloat());
+                    board[j][k].color = new Color(rand.nextFloat(), rand.nextFloat(), rand.nextFloat());
+                  }
+                  board[j][k].color = new Color(255, 255, 255);
+                }
               }
             }
           }
+
           for(int i = 0; i < userIndexX ; i++){
             board[(userWords[i][1])/40][(userWords[i][0])/40].Char = ' ';
             blankPositionMatrix[(userWords[i][1])/40][(userWords[i][0])/40] = 0;
@@ -768,12 +787,14 @@ public class Game extends JPanel implements KeyListener{
           Pair position;
           Color color;
           Pair size;
+          Boolean flashWord;
 
           public Letter(){
             Random r = new Random();
             position = new Pair(0.0, 0.0);
             color = new Color(255, 255, 255);
             Char = ' ';
+            flashWord = false;
           }
 
 
