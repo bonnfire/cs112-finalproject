@@ -502,9 +502,8 @@ public class Game extends JPanel implements KeyListener{
             }
           }
         }
-
+  //MAKE RED POWERUP
         while(true){
-          System.out.println("IN WHILE LOOP TO MAKE POWERUP RED");
           int row2 = r.nextInt(20);
           int col2 = r.nextInt(20);
           if(board[row2][col2].Char != ' ' ){
@@ -515,8 +514,8 @@ public class Game extends JPanel implements KeyListener{
           else {}
 
           }
+            //MAKE GREEN POWERUP
           while(true){
-            //System.out.println("IN WHILE LOOP TO MAKE POWERUP GREEN");
             int row2 = r.nextInt(20);
             int col2 = r.nextInt(20);
             if(board[row2][col2].Char != ' ' ){
@@ -527,8 +526,8 @@ public class Game extends JPanel implements KeyListener{
           }
             else {}
             }
-            //MAKE
-            while(true){}
+            //MAKE PURPLE POWERUP
+            while(true){
               int row2 = r.nextInt(20);
               int col2 = r.nextInt(20);
               if(board[row2][col2].Char != ' ' ){
@@ -629,6 +628,7 @@ public class Game extends JPanel implements KeyListener{
         ////CHANGE THIS TO MAKE TEXT READ FROM USER CHOSEN CATEGORY
         public void checkWord(String userInputString){
           boolean validWord = false;
+          boolean flashWords = false;
           ArrayList<String> wordList = readInText(CATEGORY);
           for(String word : wordList){
             userInputString = userInputString.trim();
@@ -661,126 +661,11 @@ public class Game extends JPanel implements KeyListener{
             if((board[(userWords[i][1])/40][(userWords[i][0])/40].color).equals(new Color(255, 0, 0))){
               TIME_GIVEN_board = TIME_GIVEN_board + 30;
             }
-          }
-          for(int i = 0; i < userIndexX ; i++){
-            board[(userWords[i][1])/40][(userWords[i][0])/40].Char = ' ';
-            blankPositionMatrix[(userWords[i][1])/40][(userWords[i][0])/40] = 0;
-          }
-          choosingWord = false;
-          //rese  tUserWords(userWords);
-          siftDown();
-          resetUserWords(userWords);
-        }
-
-
-        // resetUserWords() resets the array to allow user to select another word
-        public void resetUserWords(int[][] userWords){
-
-          for(int i = 0; i < userIndexX ; i++){
-            board[(userWords[i][1])/40][(userWords[i][0])/40].color = new Color(255, 255, 255);
-          }
-
-          System.out.println("Went into resetUserWords method");
-          for(int i = 0; i < 20; i++){
-            userWords[i][0] = 0;
-            userWords[i][1] = 0;
-          }
-          userIndexX = 0;
-          validDirection = false;
-          enter = false;
-        }
-
-        public void siftDown() {
-          System.out.println("SiftDown method got called");
-          for (int i = 0; i < 20; i++) {
-            for (int j = 18; j >= 0; j--) {
-              for (int k = 0; k < N; k++) {
-                if (board[j+1][k].Char == ' ') {
-                  char hold = board[j][k].Char;
-                  int holdforBlank = blankPositionMatrix[j][k];
-                  board[j][k].Char = board[j+1][k].Char;
-                  blankPositionMatrix[j][k] = blankPositionMatrix[j + 1][k];
-                  board[j+1][k].Char = hold;
-                  blankPositionMatrix[j + 1][k] = holdforBlank;
-                }
-              }
-            }
-          }
-        }
-
-        public void dotheShuffle(String[] currentWords){
-          System.out.println("Shuffle is called");
-          gameBoard.fillBoard(currentWords);
-        }
-
-      }
-
-
-      ////////////////////////////////
-      /////// LETTER Class
-      ////////////////////////////////
-
-      class Letter{
-        char Char;
-        Pair position;
-        Color color;
-        Pair size;
-
-        public Letter(){
-          Random r = new Random();
-          position = new Pair(0.0, 0.0);
-          color = new Color(255, 255, 255);
-          Char = ' ';
-        }
-
-
-        public void draw(Graphics g){
-          g.setColor(color);
-          String s = Character.toString(Char);
-          g.drawString(s, (int)position.x + 15, (int)position.y + 35);
-
-        }
-
-
-
-        ////////////////////////////////
-        /////// PAIR Class
-        /////// TAKEN FROM OOBOUNCING
-        ////////////////////////////////
-
-        class Pair{
-          double x;
-          double y;
-          public Pair(double x, double y){
-            this.x = x;
-            this.y = y;
-          }
-          public Pair add(Pair p){
-            Pair pair = new Pair(0, 0);
-            pair.x = this.x + p.x;
-            pair.y = this.y + p.y;
-            return pair;
-          }
-          public Pair times(double t){
-            Pair pair = new Pair(0, 0);
-            pair.x = this.x * t;
-            pair.y = this.y * t;
-            return pair;
-          }
-          public void flipX(){
-            this.x = - this.x;
-            this.y = this.y;
-          }
-          public void flipY(){
-            this.x = this.x;
-            this.y = - this.y;
-          }
-          public Pair divide(double d){
-            Pair pair = new Pair(0, 0);
-            pair.x = this.x / d;
-            pair.y = this.y / d;
-            return pair;
-          }
-        }
-      }
-    }// Game class                                                                               
+            //GREEN-POWERUP: switch rows and columns -- different orientation
+            else if((board[(userWords[i][1])/40][(userWords[i][0])/40].color).equals(new Color(0,255,0))){
+              for(int i = 0; i < 20; i++){
+                    for(int j = 0; j < 20; j++){
+                      char hold = board[j][k].Char;
+                      int holdforBlank = blankPositionMatrix[j][k];
+                      board[i][j].char = board[j][i].char;
+blankPositionMatrix[j][k] = blankPositionMatrix[j + 1][k];  
