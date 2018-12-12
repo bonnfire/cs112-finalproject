@@ -215,10 +215,8 @@ public class Game extends JPanel implements KeyListener{
         }
       }
 
-
       if(STATE.equals("menu")){
         if(code == '1'){
-          System.out.println("^___^");
           startTime = System.currentTimeMillis();
           CATEGORY = "AnimalsCategory.txt";
           STATE = "game";
