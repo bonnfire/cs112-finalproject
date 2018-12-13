@@ -26,7 +26,7 @@ import java.util.Arrays;
 import java.io.FileNotFoundException;
 
 public class Game extends JPanel implements KeyListener{
-  final int FPS = 60;
+  final int FPS = 600;
   final int SCREENWIDTH = 1000;
   final int WIDTH = 800;
   final int HEIGHT = 800;
@@ -122,6 +122,7 @@ public class Game extends JPanel implements KeyListener{
         choosingWord = false;
       }
       else{
+        gameBoard.board[(gameBoard.currentY/40)][(gameBoard.currentX/40)].color = new Color(0,0,0);
         gameBoard.userWords[gameBoard.userIndexX][0] = gameBoard.currentX;
         gameBoard.userWords[gameBoard.userIndexX][1] = gameBoard.currentY;
         System.out.println("Blue box position:" + gameBoard.currentX + ", " + gameBoard.currentY);
@@ -206,7 +207,8 @@ public class Game extends JPanel implements KeyListener{
         else if (code == KeyEvent.VK_SPACE && choosingWord == true) {
           enter = true;
           System.out.println("In Space w/ choosingWord TRUE");
-          // trackOfKeys();
+          //trackOfKeys();
+
           System.out.println(gameBoard.userIndexX);
           for(int i = 0; i < gameBoard.userIndexX-1; i++){
             if(gameBoard.userWords[i][0] == gameBoard.userWords[i+1][0] &&
@@ -232,6 +234,7 @@ public class Game extends JPanel implements KeyListener{
           System.out.println(choosingWord);
         }
         else if (code == KeyEvent.VK_SPACE && choosingWord == false) {
+            gameBoard.board[gameBoard.currentY/40][gameBoard.currentX/40].color = new Color(0,0,0);
           System.out.println("In Space w/ choosingWord FALSE");
           choosingWord = true;
           System.out.println("choosingWord = " + choosingWord);
@@ -677,6 +680,7 @@ public class Game extends JPanel implements KeyListener{
           for(int i = 0; i < gameBoard.userIndexX; i++ ){
             g.setColor(Color.GREEN);
             g.fillRect(gameBoard.userWords[i][0], gameBoard.userWords[i][1], 40, 40);
+
           }
           saveWord(userWords);
         }
@@ -748,23 +752,25 @@ public class Game extends JPanel implements KeyListener{
 
             // MAMMOTH PURPLE-POWERUP: flash the answers for half a second (half second rule against the Honor Code, no biggie)
             else if((board[(userWords[i][1])/40][(userWords[i][0])/40].color).equals(new Color(63,31,105))){
-              for(int j = 1; j < N; j++){
-                for(int k = 1; k < N; k++){
+              for(int j = 0; j < N; j++){
+                for(int k = 0; k < N; k++){
                   if(board[j][k].flashWord == true){
                     System.out.println("are you in here, purp?");
                     board[j][k].color = new Color(rand.nextFloat(), rand.nextFloat(), rand.nextFloat());
                     board[j][k].color = new Color(rand.nextFloat(), rand.nextFloat(), rand.nextFloat());
                     board[j][k].color = new Color(rand.nextFloat(), rand.nextFloat(), rand.nextFloat());
                   }
-                 board[j][k].color = new Color(255, 255, 255);
+                 //board[j][k].color = new Color(255, 255, 255);
                 }
               }
             }
           }
 
           for(int i = 0; i < userIndexX ; i++){
+              board[(userWords[i][1])/40][(userWords[i][0])/40].color = new Color(255,255,255);            
             board[(userWords[i][1])/40][(userWords[i][0])/40].Char = ' ';
             blankPositionMatrix[(userWords[i][1])/40][(userWords[i][0])/40] = 0;
+
           }
           choosingWord = false;
           resetUserWords(userWords);
