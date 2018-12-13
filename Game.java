@@ -443,9 +443,11 @@ public class Game extends JPanel implements KeyListener{
         g.setFont(new Font("TimesRoman", Font.BOLD, 50));
         String a = "You found all of the words!";
         g.drawString(a, SCREENWIDTH/15, HEIGHT/5);
-        g.setFont(new Font("TimesRoman", Font.BOLD, 10));
-        String d = "You finished with " + timeRemaining + " seconds left. At 1 extra point per 15 seconds, you earned an extra " + extraPTS + " points!";
-        g.drawString(d, 0, HEIGHT);
+        g.setFont(new Font("TimesRoman", Font.BOLD, 25));
+        String d = "You finished with " + timeRemaining + " seconds left.";
+        String p = "At 1 extra point per 15 seconds, you earned an extra " + extraPTS + " points!";
+        g.drawString(d, 0, HEIGHT-100);
+          g.drawString(p, 0, HEIGHT-50);
         g.setFont(new Font("TimesRoman", Font.BOLD, 25));
         String b = "To go back to the menu, type: M";
         g.drawString(b, (SCREENWIDTH/5), (HEIGHT/3));
