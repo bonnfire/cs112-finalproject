@@ -40,6 +40,7 @@ public class Game extends JPanel implements KeyListener{
   long startTime = 0; // start with 0 ms
   String STATE = "menu"; // default state is menu
   String CATEGORY; // use this string for accessing the text file
+  String CategoryToPrint; //use this string to display in Game string
   long realScore = 0; // print the score after alterations from time/shuffle
   long timeRemaining; // countdown display
   long endTime; // use System time to determine the endTime
@@ -97,11 +98,12 @@ public class Game extends JPanel implements KeyListener{
   // randomly extract the specified number of words from the ArrayList
   public static String[] getWords(int n, ArrayList<String> words) {
     Random r = new Random();
-    String[] toReturn = new String[n];
+    String[] toReturn = new String[n+1];
     for (int i = 0; i < n; i++) {
       int w = r.nextInt(words.size());
       toReturn[i] = words.get(w);
     }
+    toReturn[n] = "ALFELD";
     return toReturn;
   }
 
@@ -238,31 +240,42 @@ public class Game extends JPanel implements KeyListener{
 
         else if(code == 'q' || code == 'Q'){
           STATE = "quit";
-        }
+         }
       }
 
       if(STATE.equals("menu")){
         if(code == '1'){
           startTime = System.currentTimeMillis();
           CATEGORY = "AnimalsCategory.txt";
+          CategoryToPrint = "Category: Animals";
           STATE = "game";
           setup();
         }
         else if(code == '2'){
           startTime = System.currentTimeMillis();
           CATEGORY = "ColorsCategory.txt";
+          CategoryToPrint = "Category: Colors";
           STATE = "game";
           setup();
         }
         else if(code == '3'){
           startTime = System.currentTimeMillis();
           CATEGORY = "StateCapitalsCategory.txt";
+          CategoryToPrint = "Category: Capitals";
           STATE = "game";
           setup();
         }
         else if(code == '4'){
           startTime = System.currentTimeMillis();
-          CATEGORY = "Furniture.txt";
+          CATEGORY = "BodyPartsCategory.txt";
+          CategoryToPrint = "Category: Body Parts";
+          STATE = "game";
+          setup();
+        }
+        else if(code == '5'){
+          startTime = System.currentTimeMillis();
+          CATEGORY = "LocksCategory.txt";
+          CategoryToPrint = "Category: Locks";
           STATE = "game";
           setup();
         }
@@ -305,21 +318,34 @@ public class Game extends JPanel implements KeyListener{
         g.setColor(Color.WHITE);
         g.setFont(new Font("TimesRoman", Font.BOLD, 45));
         String a = "Welcome to MegaWordSearch!";
-        g.drawString(a, SCREENWIDTH/10, HEIGHT/5);
+        g.drawString(a, (SCREENWIDTH/10) +25, HEIGHT/5);
 
         g.setFont(new Font("TimesRoman", Font.BOLD, 20));
         String b = "To play, select on your keyboard the number of the category you wish to play in!";
-        g.drawString(b, (SCREENWIDTH/4)-215, (HEIGHT/4)+ 15);
+        g.drawString(b, (SCREENWIDTH/4)-160, (HEIGHT/4)+ 15);
         String c = "Once you select a category, you have 3 minutes to identify 6 words";
-        g.drawString(c, (SCREENWIDTH/4)-125, (2*HEIGHT)/5);
+        g.drawString(c, (SCREENWIDTH/4)-100, (2*HEIGHT)/5);
         String d = "Be ready - once you enter the category the game will begin!";
         g.drawString(d, (SCREENWIDTH/4)-75,  HEIGHT/3);
 
         g.setFont(new Font("TimesRoman", Font.BOLD, 35));
         String e = "1 - Animals             3 - US Capitals";
-        String f = "2 - Colors                4 - Furniture";
-        g.drawString(e, (SCREENWIDTH/4)-75,  (2*HEIGHT)/3);
-        g.drawString(f, (SCREENWIDTH/4)-75,  ((2*HEIGHT)/3)+ 50);
+        String f = "2 - Colors               4 - Body Parts";
+        String h = "5 - Locks";
+        g.drawString(e, (SCREENWIDTH/4)-75,  ((2*HEIGHT)/3) -90);
+        g.drawString(f, (SCREENWIDTH/4)-75,  ((2*HEIGHT)/3)-40);
+        g.drawString(h, (SCREENWIDTH/4)+90,  ((2*HEIGHT)/3)+10);
+
+        g.setFont(new Font("TimesRoman", Font.BOLD, 25));
+        String m = "Directions: To play the game, you use the arrow keys to move the blue cursor";
+        String n = "over the first letter of the desired word. Hit SPACEBAR. Use the arrow keys";
+        String o = "to go directly over the remaining letters of the desired word. When at the end,";
+        String p = "press SPACEBAR again. ";
+        g.drawString(m, (SCREENWIDTH/10),  HEIGHT-120);
+        g.drawString(n, (SCREENWIDTH/10),  HEIGHT -90);
+        g.drawString(o, (SCREENWIDTH/10),  HEIGHT-60);
+        g.drawString(p, (SCREENWIDTH/10), HEIGHT - 30);
+
       }
 
       if(STATE.equals("quit")){
@@ -380,6 +406,7 @@ public class Game extends JPanel implements KeyListener{
         g.setFont(new Font("TimesRoman", Font.BOLD, 30));
         gameBoard.drawLetters(g);
         gameBoard.drawScore(g);
+        g.drawString(CategoryToPrint,825, 50);
         endTime = System.currentTimeMillis();
         TIME_GIVEN = gameBoard.TIME_GIVEN_board;
         timeRemaining = TIME_GIVEN - ((endTime - startTime)/1000);
@@ -387,10 +414,10 @@ public class Game extends JPanel implements KeyListener{
           long min = timeRemaining/60;
           long secs = timeRemaining%60;
           if (secs < 10) {
-            g.drawString("Time: " + Long.toString(min) + ":0" + Long.toString(secs), 800, 200);
+            g.drawString("Time: " + Long.toString(min) + ":0" + Long.toString(secs), 850, 200);
           }
           else {
-            g.drawString("Time: " + Long.toString(min) + ":" + Long.toString(secs), 800, 200);
+            g.drawString("Time: " + Long.toString(min) + ":" + Long.toString(secs), 850, 200);
           }
         }
         else{
@@ -569,8 +596,8 @@ public class Game extends JPanel implements KeyListener{
             if(blankPositionMatrix[q][s] == 1){
               char c  = test[q][s];
               if (c == ' '){
-                //board[q][s].Char = (char)(r.nextInt(26)+65);
-                board[q][s].Char = '*';
+                board[q][s].Char = (char)(r.nextInt(26)+65);
+              //  board[q][s].Char = '*';
               }
             }
             board[q][s].position.x = 40*s;
@@ -613,7 +640,7 @@ public class Game extends JPanel implements KeyListener{
       // print in the margins the score
       public void drawScore(Graphics g){
         g.setFont(new Font("TimesRoman", Font.BOLD, 20));
-        g.drawString("# of Found Words: " + Integer.toString(countOfValidWords), 800, 100);
+        g.drawString("# of Found Words: " + Integer.toString(countOfValidWords), 810, 100);
       }
 
 
@@ -640,6 +667,7 @@ public class Game extends JPanel implements KeyListener{
       public void checkWord(String userInputString){
         boolean validWord = false;
         ArrayList<String> wordList = readInText(CATEGORY);
+        wordList.add("ALFELD");
         for(String word : wordList){
           userInputString = userInputString.trim();
           word = word.trim();
@@ -664,14 +692,6 @@ public class Game extends JPanel implements KeyListener{
       // update() removes word + calls sift to update the board
       public void update(int[][] userWords){
 
-
-        for(int i = 0; i < userIndexX ; i++){
-          board[(userWords[i][1])/40][(userWords[i][0])/40].color = new Color(255,255,255);
-          board[(userWords[i][1])/40][(userWords[i][0])/40].Char = ' ';
-          blankPositionMatrix[(userWords[i][1])/40][(userWords[i][0])/40] = 0;
-          board[(userWords[i][1])/40][(userWords[i][0])/40].selected = new Color(255,255,255);
-        }
-
         for(int i = 0; i < userIndexX ; i++){
 
           //RED-POWERUP: adds 30 seconds to timer
@@ -689,9 +709,6 @@ public class Game extends JPanel implements KeyListener{
                 blankPositionMatrix[j][k] = blankPositionMatrix[k][j];
                 board[k][j].Char = hold;
                 blankPositionMatrix[k][j] = holdforBlank;
-                // Color holdC = board[j][k].selected;
-                // board[j][k].selected = board[k][j].selected;
-                // board[k][j].selected = holdC;
                 // Letter hold = board[j][k];
                 // int holdforBlank = blankPositionMatrix[j][k];
                 // board[j][k] = board[k][j];
@@ -704,7 +721,6 @@ public class Game extends JPanel implements KeyListener{
 
           // MAMMOTH PURPLE-POWERUP: flash the answers against the Honor Code, no biggie)
           else if((board[(userWords[i][1])/40][(userWords[i][0])/40].color).equals(new Color(63,31,105))){
-            System.out.println("purple is running");
             for(int j = 0; j < N; j++){
               for(int k = 0; k < N; k++){
                 if(board[j][k].flashWord == true){
@@ -730,6 +746,13 @@ public class Game extends JPanel implements KeyListener{
         //   blankPositionMatrix[(userWords[i][1])/40][(userWords[i][0])/40] = 0;
         //   board[(userWords[i][1])/40][(userWords[i][0])/40].selected = new Color(255,255,255);
         // }
+
+         for(int i = 0; i < userIndexX ; i++){
+          board[(userWords[i][1])/40][(userWords[i][0])/40].color = new Color(255,255,255);
+          board[(userWords[i][1])/40][(userWords[i][0])/40].Char = ' ';
+          blankPositionMatrix[(userWords[i][1])/40][(userWords[i][0])/40] = 0;
+          board[(userWords[i][1])/40][(userWords[i][0])/40].selected = new Color(255,255,255);
+        }
         choosingWord = false;
         resetUserWords(userWords);
         siftDown();
@@ -739,8 +762,10 @@ public class Game extends JPanel implements KeyListener{
 
       // resetUserWords() resets the array to allow user to select another word
       public void resetUserWords(int[][] userWords){
-        System.out.println("Went into resetUserWords method");
         for(int i = 0; i < 20; i++){
+         board[(userWords[i][1])/40][(userWords[i][0])/40].selected = new Color(255,255,255);
+}
+         for(int i =0; i<20;i++){
           userWords[i][0] = 0;
           userWords[i][1] = 0;
         }
@@ -751,7 +776,6 @@ public class Game extends JPanel implements KeyListener{
 
       // change the position of the blank cells so that they are on the top of the grid
       public void siftDown() {
-        System.out.println("SiftDown method got called");
         for (int i = 0; i < 20; i++) {
           for (int j = 18; j >= 0; j--) {
             for (int k = 0; k < N; k++) {
