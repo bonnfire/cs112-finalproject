@@ -46,7 +46,7 @@ public class Game extends JPanel implements KeyListener{
   long extraPTS = 0; // award extra points for finding words exceptionally fast
 
 
-// Game constructor
+  // Game constructor
   public Game(){
     this.setPreferredSize(new Dimension(SCREENWIDTH, HEIGHT));
     addKeyListener(this);
@@ -63,21 +63,21 @@ public class Game extends JPanel implements KeyListener{
     frame.setVisible(true);
   }
 
-// initial creation of the word bank and fill the board
+  // initial creation of the word bank and fill the board
   private void setup(){
     ArrayList<String> wordList = readInText(CATEGORY);
     String[] currentWords = getWords(numberOfWords, wordList);
     gameBoard.fillBoard(currentWords);
   }
 
-// subsequent filling up of the board with shuffle call
+  // subsequent filling up of the board with shuffle call
   private void setup(int countOfValidWords){
     ArrayList<String> wordList = readInText(CATEGORY);
     String[] currentWords = getWords(numberOfWords - countOfValidWords, wordList);
     gameBoard.fillBoard(currentWords);
   }
 
-// given the text file name, create the ArrayList
+  // given the text file name, create the ArrayList
   public static ArrayList<String> readInText(String filename) {
     File file = new File(filename);
     ArrayList<String> wordBank = new ArrayList<String>();
@@ -94,7 +94,7 @@ public class Game extends JPanel implements KeyListener{
     return wordBank;
   }
 
-// randomly extract the specified number of words from the ArrayList
+  // randomly extract the specified number of words from the ArrayList
   public static String[] getWords(int n, ArrayList<String> words) {
     Random r = new Random();
     String[] toReturn = new String[n];
@@ -105,7 +105,7 @@ public class Game extends JPanel implements KeyListener{
     return toReturn;
   }
 
-// animation magic
+  // animation magic
   class Runner implements Runnable{
     public void run(){
       while(true){
@@ -118,7 +118,7 @@ public class Game extends JPanel implements KeyListener{
       }
     }
 
-// activates filling in the userWords array with pointer
+    // activates filling in the userWords array with pointer
     public void trackOfKeys(){
       if(gameBoard.userIndexX == 20){
         gameBoard.resetUserWords(gameBoard.userWords);
@@ -128,15 +128,15 @@ public class Game extends JPanel implements KeyListener{
         // for(int i = 0; i < gameBoard.userIndexX; i++ ){
         //      g.setColor(Color.GREEN);
         //      g.fillRect(gameBoard.userWords[i][0], gameBoard.userWords[i][1], 40, 40);}
-      gameBoard.board[(gameBoard.currentY/40)][(gameBoard.currentX/40)].selected = new Color(0,0,0);
-      gameBoard.userWords[gameBoard.userIndexX][0] = gameBoard.currentX;
-      gameBoard.userWords[gameBoard.userIndexX][1] = gameBoard.currentY;
-      gameBoard.userIndexX += 1;
-  }
+        gameBoard.board[(gameBoard.currentY/40)][(gameBoard.currentX/40)].selected = new Color(0,0,0);
+        gameBoard.userWords[gameBoard.userIndexX][0] = gameBoard.currentX;
+        gameBoard.userWords[gameBoard.userIndexX][1] = gameBoard.currentY;
+        gameBoard.userIndexX += 1;
       }
+    }
 
-// dependent on the STATE of the program
-// takes in all of the user input from the keyboard to redirect the game
+    // dependent on the STATE of the program
+    // takes in all of the user input from the keyboard to redirect the game
     public void keyPressed(KeyEvent e) {
       int code = e.getKeyCode();
       if(STATE.equals("quit") || STATE.equals("ranOutofTime")){
@@ -527,8 +527,6 @@ public class Game extends JPanel implements KeyListener{
           int col2 = r.nextInt(20);
           if(board[row2][col2].Char != ' ' ){
             board[row2][col2].color = new Color(255,0,0);
-            System.out.println(row2 + "     " + col2);
-            System.out.println("In if loop");
             break;
           }
         }
@@ -618,7 +616,7 @@ public class Game extends JPanel implements KeyListener{
         g.drawString("# of Found Words: " + Integer.toString(countOfValidWords), 800, 100);
       }
 
-      // print in the
+
       public void selectLetter(Graphics g){
         for(int i = 0; i < gameBoard.userIndexX; i++ ){
           g.setColor(Color.GREEN);
@@ -628,6 +626,7 @@ public class Game extends JPanel implements KeyListener{
         saveWord(userWords);
       }
 
+      // parse characters into string
       public void saveWord(int[][] userWords){
         char[] c = new char[N];
         for(int i = 0; i < userIndexX; i++){
@@ -637,13 +636,12 @@ public class Game extends JPanel implements KeyListener{
         checkWord(userInputString);
       }
 
-
+      // compare string with the word bank
       public void checkWord(String userInputString){
         boolean validWord = false;
         ArrayList<String> wordList = readInText(CATEGORY);
         for(String word : wordList){
           userInputString = userInputString.trim();
-          System.out.println("Compare to " + word);
           word = word.trim();
           if ((userInputString).equals(word)){
             validWord = true;
@@ -665,6 +663,15 @@ public class Game extends JPanel implements KeyListener{
 
       // update() removes word + calls sift to update the board
       public void update(int[][] userWords){
+
+
+        for(int i = 0; i < userIndexX ; i++){
+          board[(userWords[i][1])/40][(userWords[i][0])/40].color = new Color(255,255,255);
+          board[(userWords[i][1])/40][(userWords[i][0])/40].Char = ' ';
+          blankPositionMatrix[(userWords[i][1])/40][(userWords[i][0])/40] = 0;
+          board[(userWords[i][1])/40][(userWords[i][0])/40].selected = new Color(255,255,255);
+        }
+
         for(int i = 0; i < userIndexX ; i++){
 
           //RED-POWERUP: adds 30 seconds to timer
@@ -717,12 +724,12 @@ public class Game extends JPanel implements KeyListener{
           }
         }
 
-        for(int i = 0; i < userIndexX ; i++){
-          board[(userWords[i][1])/40][(userWords[i][0])/40].color = new Color(255,255,255);
-          board[(userWords[i][1])/40][(userWords[i][0])/40].Char = ' ';
-          blankPositionMatrix[(userWords[i][1])/40][(userWords[i][0])/40] = 0;
-          board[(userWords[i][1])/40][(userWords[i][0])/40].selected = new Color(255,255,255);
-        }
+        // for(int i = 0; i < userIndexX ; i++){
+        //   board[(userWords[i][1])/40][(userWords[i][0])/40].color = new Color(255,255,255);
+        //   board[(userWords[i][1])/40][(userWords[i][0])/40].Char = ' ';
+        //   blankPositionMatrix[(userWords[i][1])/40][(userWords[i][0])/40] = 0;
+        //   board[(userWords[i][1])/40][(userWords[i][0])/40].selected = new Color(255,255,255);
+        // }
         choosingWord = false;
         resetUserWords(userWords);
         siftDown();
@@ -742,6 +749,7 @@ public class Game extends JPanel implements KeyListener{
         enter = false;
       }
 
+      // change the position of the blank cells so that they are on the top of the grid
       public void siftDown() {
         System.out.println("SiftDown method got called");
         for (int i = 0; i < 20; i++) {
@@ -760,91 +768,54 @@ public class Game extends JPanel implements KeyListener{
         }
       }
 
-      // public void dotheShuffle(String[] currentWords){
-      //   System.out.println("Shuffle is called");
-      //   // for(int i = 0; i < 20; i++){
-      //   //   for(int j = 0; j < 20; j++){
-      //   //     board[i][j].color = new Color(0, 0, 0);
-      //   //   }
-      //   // }
-      //   gameBoard.fillBoard(currentWords);
-      // }
+    } // Board class
 
+    ////////////////////////////////
+    /////// LETTER Class
+    ////////////////////////////////
 
-      ////////////////////////////////
-      /////// LETTER Class
-      ////////////////////////////////
+    class Letter{
+      char Char; // char holds the letters
+      Pair position; // (x, y) to hold the position in the grid
+      Color color; // color of the string
+      Color selected; // color for highlight
+      boolean flashWord; // all words selected from the list should be able to flash under the activation of the mammoth purple powerup
 
-      class Letter{
-        char Char;
-        Pair position;
-        Color color;
-        Color selected;
-        Pair size;
-        boolean flashWord;
+      public Letter(){
+        Random r = new Random();
+        position = new Pair(0.0, 0.0);
+        color = new Color(255, 255, 255);
+        selected = new Color(255, 255, 255);
+        Char = ' ';
+        flashWord = false;
+      }
 
-        public Letter(){
-          Random r = new Random();
-          position = new Pair(0.0, 0.0);
-          color = new Color(255, 255, 255);
-          selected = new Color(255, 255, 255);
-          Char = ' ';
-          flashWord = false;
+      // draw the character with the designated color
+      public void draw(Graphics g){
+        if (color.equals(new Color(255,255,255))) {
+          g.setColor(selected);
         }
+        else
+        g.setColor(color);
+        String s = Character.toString(Char);
+        g.drawString(s, (int)position.x + 15, (int)position.y + 35);
 
-
-        public void draw(Graphics g){
-          if (color.equals(new Color(255,255,255))) {
-            g.setColor(selected);
-          }
-          else
-            g.setColor(color);
-          String s = Character.toString(Char);
-          g.drawString(s, (int)position.x + 15, (int)position.y + 35);
-
-        }
-
-
-
-        ////////////////////////////////
-        /////// PAIR Class
-        /////// TAKEN FROM OOBOUNCING
-        ////////////////////////////////
-
-        class Pair{
-          double x;
-          double y;
-          public Pair(double x, double y){
-            this.x = x;
-            this.y = y;
-          }
-          public Pair add(Pair p){
-            Pair pair = new Pair(0, 0);
-            pair.x = this.x + p.x;
-            pair.y = this.y + p.y;
-            return pair;
-          }
-          public Pair times(double t){
-            Pair pair = new Pair(0, 0);
-            pair.x = this.x * t;
-            pair.y = this.y * t;
-            return pair;
-          }
-          public void flipX(){
-            this.x = - this.x;
-            this.y = this.y;
-          }
-          public void flipY(){
-            this.x = this.x;
-            this.y = - this.y;
-          }
-          public Pair divide(double d){
-            Pair pair = new Pair(0, 0);
-            pair.x = this.x / d;
-            pair.y = this.y / d;
-            return pair;
-          }
-        }
       }
     }
-  }// Game class
+
+
+
+      ////////////////////////////////
+      /////// PAIR Class
+      /////// TAKEN FROM OOBOUNCING
+      ////////////////////////////////
+
+      class Pair{
+        double x;
+        double y;
+        public Pair(double x, double y){
+          this.x = x;
+          this.y = y;
+        }
+      }
+    }// Game class
