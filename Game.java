@@ -721,7 +721,7 @@ public class Game extends JPanel implements KeyListener{
             }
           }
 
-          // MAMMOTH PURPLE-POWERUP: flash the answers against the Honor Code, no biggie)
+          // MAMMOTH PURPLE-POWERUP: flash the answers and some against the Honor Code, no biggie)
           else if((board[(userWords[i][1])/40][(userWords[i][0])/40].color).equals(new Color(63,31,105))){
             for(int j = 0; j < N; j++){
               for(int k = 0; k < N; k++){
