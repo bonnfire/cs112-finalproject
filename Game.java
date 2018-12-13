@@ -33,7 +33,6 @@ public class Game extends JPanel implements KeyListener{
   int TIME_GIVEN = 100;
   int numberOfWords = 6;
   ArrayList<String> wordList;
-  //ArrayList<String> wordList = readInText("AnimalsCategory.txt");
   Board gameBoard = null;
   boolean validDirection = false;
   boolean enter = false;
@@ -246,16 +245,8 @@ public class Game extends JPanel implements KeyListener{
           gameBoard.userIndexX += 1;
         }
         else if(code == 's' || code == 'S'){
-          System.out.println("Shuffle was attempted");
+          gameBoard.TIME_GIVEN_board -= 15;
           setup(gameBoard.countOfValidWords);
-          //gameBoard.dotheShuffle(currentWords);
-          // setup();
-          // for(int i = 0; i < 20; i++){
-          //   for(int j = 0; j <20; j++){
-          //     System.out.print(gameBoard.blankPositionMatrix[i][j]);
-          //   }
-          //   System.out.println();
-          // }
         }
 
         else if(code == 'q' || code == 'Q'){
@@ -407,8 +398,6 @@ public class Game extends JPanel implements KeyListener{
         g.setFont(new Font("TimesRoman", Font.BOLD, 30));
         gameBoard.drawLetters(g);
         gameBoard.drawScore(g);
-        //gameBoard.drawWords(g);
-
         endTime = System.currentTimeMillis();
         TIME_GIVEN = gameBoard.TIME_GIVEN_board;
         timeRemaining = TIME_GIVEN - ((endTime - startTime)/1000);
@@ -472,9 +461,7 @@ public class Game extends JPanel implements KeyListener{
       int currentX = 0;
       int currentY = 0;
       int userIndexX = 0;
-      //int userIndexY = 0 ;
       int[][] userWords = new int[20][2];
-      int inputLettersIndex = -1;
       int countOfValidWords = 0;
       int[][] blankPositionMatrix = new int[N][N];
       String[] foundWords = new String[6];
@@ -609,6 +596,17 @@ public class Game extends JPanel implements KeyListener{
               }
             }
           }
+          // MAKE GOLD POWERUP
+          while(true){
+            int row2 = r.nextInt(20);
+            int col2 = r.nextInt(20);
+            if(board[row2][col2].Char != ' ' ){
+              if(!(board[row2][col2].color).equals(new Color(255, 0, 0)) && !(board[row2][col2].color).equals(new Color(63,31,105)) && !(board[row2][col2].color).equals(new Color(0, 255, 0))){
+                board[row2][col2].color = new Color(255,215,0);
+                break;
+              }
+            }
+          }
 
           for (int q = 0; q < N; q++) {
             for (int s = 0; s < N; s++) {
@@ -660,21 +658,10 @@ public class Game extends JPanel implements KeyListener{
           }
         }
 
-
         public void drawScore(Graphics g){
           g.setFont(new Font("TimesRoman", Font.BOLD, 20));
           g.drawString("# of Found Words: " + Integer.toString(countOfValidWords), 800, 100);
         }
-
-        // public void drawWords(Graphics g){
-        //   g.drawString("FoundWords", 800, 300);
-        //   while(countOfValidWords != 0 && countOfValidWords < 6){
-        //   for(int i = 0; i < 6; i = i + 25){
-        //     g.drawString(foundWords[countOfValidWords], 800, 330 + i);
-        //     break;
-        //   }
-        //   }
-        // }
 
         public void selectLetter(Graphics g){
           for(int i = 0; i < gameBoard.userIndexX; i++ ){
@@ -750,24 +737,30 @@ public class Game extends JPanel implements KeyListener{
               }
             }
 
-            // MAMMOTH PURPLE-POWERUP: flash the answers for half a second (half second rule against the Honor Code, no biggie)
+            // MAMMOTH PURPLE-POWERUP: flash the answers against the Honor Code, no biggie)
             else if((board[(userWords[i][1])/40][(userWords[i][0])/40].color).equals(new Color(63,31,105))){
+              System.out.println("purple is running");
               for(int j = 0; j < N; j++){
                 for(int k = 0; k < N; k++){
                   if(board[j][k].flashWord == true){
-                    System.out.println("are you in here, purp?");
-                    board[j][k].color = new Color(rand.nextFloat(), rand.nextFloat(), rand.nextFloat());
-                    board[j][k].color = new Color(rand.nextFloat(), rand.nextFloat(), rand.nextFloat());
                     board[j][k].color = new Color(rand.nextFloat(), rand.nextFloat(), rand.nextFloat());
                   }
-                 //board[j][k].color = new Color(255, 255, 255);
+                }
+              }
+            }
+
+            // GOLD-POWERUP: clears all powerups
+            else if((board[(userWords[i][1])/40][(userWords[i][0])/40].color).equals(new Color(255,215,0))){
+              for(int j = 0; j < N; j++){
+                for(int k = 0; k < N; k++){
+                 board[j][k].color = new Color(255, 255, 255);
                 }
               }
             }
           }
 
           for(int i = 0; i < userIndexX ; i++){
-              board[(userWords[i][1])/40][(userWords[i][0])/40].color = new Color(255,255,255);            
+              board[(userWords[i][1])/40][(userWords[i][0])/40].color = new Color(255,255,255);
             board[(userWords[i][1])/40][(userWords[i][0])/40].Char = ' ';
             blankPositionMatrix[(userWords[i][1])/40][(userWords[i][0])/40] = 0;
 
@@ -776,7 +769,7 @@ public class Game extends JPanel implements KeyListener{
           resetUserWords(userWords);
           siftDown();
 
-        }
+      }
 
 
         // resetUserWords() resets the array to allow user to select another word
